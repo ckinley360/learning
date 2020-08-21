@@ -34,8 +34,7 @@ public class SportStatistics {
                 } else if (game.getLoser().equals(team)) {
                     losses++;
                 }
-            }
-            
+            }   
         }
         
         // Output the number of games played, wins, and losses for the team.
