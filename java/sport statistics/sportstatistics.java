@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class SportStatistics {
  
     public static void main(String[] args) {
-        // Initialize Scanner object to read user input.
+        // Create Scanner object to read user input.
         Scanner scan = new Scanner(System.in);
         
         // Request and grab filename from user.
@@ -44,7 +44,7 @@ public class SportStatistics {
     }
     
     public static ArrayList<Game> readRecordsFromFile(String file) {
-        // Initialize list to store each line of file which will be converted to a Game object.
+        // Create list to store each line of file which will be converted to a Game object.
         ArrayList<Game> games = new ArrayList<>();
         
         // Create Scanner object to read the file.
@@ -59,7 +59,7 @@ public class SportStatistics {
                 // Split the line on comma and store the substrings in an array.
                 String[] substrings = line.split(",");
                 
-                // User the four substrings in the array to initialize a new Game object and add to the games list.
+                // Use the four substrings in the array to create a new Game object and add to the games list.
                 games.add(new Game(substrings[0], substrings[1], Integer.valueOf(substrings[2]), Integer.valueOf(substrings[3])));
             }
         } catch (Exception e) {
