@@ -50,7 +50,7 @@ public class Money {
 
         // If the difference of current cents and decreaser cents is negative, then decrement euros accordingly, and store remainder in newCents.
         if (newCents < 0) {
-            newEuros = newEuros + (newCents / 100) - 1; // ***
+            newEuros = newEuros + (newCents / 100) - 1;
             newCents = (newCents % 100) + 100;
         }
 
