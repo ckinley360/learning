@@ -3,8 +3,6 @@ import java.util.ArrayList;
 public class Suitcase {
     private ArrayList<Item> items;
     private int maxWeight;
-//    private int itemCount;
-//    private int weight;
     
     public Suitcase(int maxWeight) {
         this.items = new ArrayList<>();
