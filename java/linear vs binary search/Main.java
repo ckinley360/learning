@@ -4,7 +4,8 @@ import java.util.Scanner;
 public class Main {
  
     public static void main(String[] args) {
-        // The program below is meant for testing the search algorithms you'll write
+     
+        // Create the specified number of book objects.
         Scanner scanner = new Scanner(System.in);
         ArrayList<Book> books = new ArrayList<>();
         System.out.println("How many books to create?");
@@ -13,9 +14,11 @@ public class Main {
             books.add(new Book(i, "name for the book " + i));
         }
  
+        // Obtain the book ID that the user wants to search for.
         System.out.println("Id of the book to search for?");
         int idToSearchFor = Integer.valueOf(scanner.nextLine());
  
+        // Search for the ID using linear search.
         System.out.println("");
         System.out.println("Searching with linear search:");
         long start = System.currentTimeMillis();
@@ -29,6 +32,7 @@ public class Main {
  
         System.out.println("");
  
+        // Search for the ID using binary search.
         System.out.println("");
         System.out.println("Seaching with binary search:");
         start = System.currentTimeMillis();
