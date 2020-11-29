@@ -47,6 +47,5 @@ public class AverageOfSelectedNumbers {
         
         // Output the average.
         System.out.println("Average of the negative numbers: " + average);
-        
     }
 }
