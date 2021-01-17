@@ -96,5 +96,4 @@ public class PartiesApplication extends Application {
 
         launch(PartiesApplication.class);
     }
- 
 }
