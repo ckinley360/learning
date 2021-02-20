@@ -26,6 +26,10 @@ public class Graph {
         return this.vertices.get(name);
     }
     
+    public Edge getEdge(int index) {
+        return this.edges.get(index);
+    }
+    
     public boolean hasVertex(Vertex vertex) {
         return this.vertices.containsKey(vertex.getName());
     }
@@ -38,6 +42,35 @@ public class Graph {
         this.edges.add(edge);
     }
     
+    public int getVertexCount() {
+        return this.vertices.size();
+    }
+    
+    public int getEdgeCount() {
+        return this.edges.size();
+    }
+    
+    public void removeVertex(Vertex vertex) {
+        this.vertices.remove(vertex.getName());
+    }
+    
+    public void removeEdge(Edge edge) {
+        // Remove the first instance of the edge from the edge list.
+        this.edges.remove(edge);
+    }
+    
+    public void removeSelfLoops() {
+        for (Edge edge:this.edges) {
+            if (edge.isSelfLoop()) {
+                
+                this.getVertex(edge.getEndpointOne().getName()).removeEdge(edge);
+                
+                this.removeEdge(edge);
+            }
+        }
+    }
+    
+    @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
         
