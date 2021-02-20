@@ -1,11 +1,31 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Random;
+import java.sql.Timestamp;
 
 public class MainProgram {
 
     public static void main(String[] args) {
-        
+        Graph graph = readDataFromFile("data.txt");
+//        Edge edge = chooseEdgeAtRandom(graph);
+//        
+//        System.out.println("Random edge: " + edge);
+
+        // Run the experiment 2000 times.
+        for (int i = 1; i <= 2000; i++) {
+            // While there are more than 2 vertices remaining, run the random contraction algorithm.
+            while (graph.getVertexCount() > 2) {
+                // Choose a remaining edge at random.
+                Edge randomEdge = chooseEdgeAtRandom(graph);
+                
+                // Contract the endpoints of the edge.
+                contractEndpoints(graph, randomEdge);
+                
+                // Remove self-loops.
+                graph.removeSelfLoops();
+            }
+        }
     }
     
     public static Graph readDataFromFile(String filePath) {
@@ -29,7 +49,7 @@ public class MainProgram {
                 }
                 
                 // Iterate through the rest of the array, create a Vertex object for each adjacent vertex as needed, and connect edges from the adjacent vertices to the vertex represented by the first element of the array.
-                for (int i = 1; i <= parts.length; i++) {
+                for (int i = 1; i <= parts.length - 1; i++) {
                     Vertex adjacentVertex = new Vertex(parts[i]);
                     
                     if (!graph.hasVertex(adjacentVertex)) {
@@ -52,5 +72,27 @@ public class MainProgram {
         }
         
         return graph;
+    }
+    
+    public static Edge chooseEdgeAtRandom(Graph graph) {
+        Random rand = new Random();
+        int randomNumber = rand.nextInt(graph.getEdgeCount());
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        int randomIndex = (int) (randomNumber * timestamp.getTime() % (graph.getEdgeCount() - 1));  // Subtract 1 from edge count to make adjustment from length to index.
+        Edge randomEdge = graph.getEdge(randomIndex);
+        
+        return randomEdge;
+    }
+    
+    public static void contractEndpoints(Graph graph, Edge edge) {
+        Vertex endpointOne = edge.getEndpointOne();
+        Vertex endpointTwo = edge.getEndpointTwo();
+        
+        // Transfer all of endpointTwo's edges to endpointOne.
+        endpointTwo.transferEdges(endpointOne);
+        
+        // Delete the currently chosen edge, and endpointTwo.
+        graph.removeEdge(edge);
+        graph.removeVertex(endpointTwo);
     }
 }
