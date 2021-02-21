@@ -3,17 +3,19 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Random;
 import java.sql.Timestamp;
+import java.util.Arrays;
 
 public class MainProgram {
 
     public static void main(String[] args) {
-        Graph graph = readDataFromFile("data.txt");
-//        Edge edge = chooseEdgeAtRandom(graph);
-//        
-//        System.out.println("Random edge: " + edge);
-
+        int[] edgeCounts = new int[2000];
+        
         // Run the experiment 2000 times.
-        for (int i = 1; i <= 2000; i++) {
+        for (int i = 0; i <= 1999; i++) {
+            
+            // Create the graph from the data file.
+            Graph graph = readDataFromFile("data.txt");
+            
             // While there are more than 2 vertices remaining, run the random contraction algorithm.
             while (graph.getVertexCount() > 2) {
                 // Choose a remaining edge at random.
@@ -25,7 +27,14 @@ public class MainProgram {
                 // Remove self-loops.
                 graph.removeSelfLoops();
             }
+            
+            edgeCounts[i] = graph.getEdgeCount();
+//            System.out.println("Number of edges remaining: " + graph.getEdgeCount());
         }
+        
+        // Find the min cut and display the array.
+        Arrays.sort(edgeCounts);
+        System.out.println("Min cut: " + edgeCounts[0] / 2); // Divide by two to account for duplicate edges due to data format of input file.
     }
     
     public static Graph readDataFromFile(String filePath) {
