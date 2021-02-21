@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.StringBuilder;
+import java.util.Iterator;
 
 public class Graph {
     
@@ -60,12 +61,23 @@ public class Graph {
     }
     
     public void removeSelfLoops() {
-        for (Edge edge:this.edges) {
+//        for (Edge edge : this.edges) {
+//            if (edge.isSelfLoop()) {
+//                
+//                this.getVertex(edge.getEndpointOne().getName()).removeEdge(edge);
+//                
+//                this.removeEdge(edge);
+//            }
+//        }
+
+        Iterator<Edge> iter = this.edges.iterator();
+        
+        while (iter.hasNext()) {
+            Edge edge = iter.next(); // This is just a reference to the actual Edge object. It doesn't create a new Edge object.
+            
             if (edge.isSelfLoop()) {
-                
                 this.getVertex(edge.getEndpointOne().getName()).removeEdge(edge);
-                
-                this.removeEdge(edge);
+                iter.remove();
             }
         }
     }
