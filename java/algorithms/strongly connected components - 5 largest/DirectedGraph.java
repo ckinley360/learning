@@ -20,12 +20,26 @@ public class DirectedGraph {
         return this.edges;
     }
     
+    public Vertex getVertex(Vertex compareVertex) {
+        for (Vertex vertex : this.vertices) {
+            if (vertex.getName() == compareVertex.getName()) {
+                return vertex;
+            }
+        }
+        
+        return null;
+    }
+    
     public void addVertex(Vertex vertex) {
         this.vertices.add(vertex);
     }
     
     public void addEdge(Edge edge) {
         this.edges.add(edge);
+    }
+    
+    public boolean hasVertex(Vertex vertex) {
+        return this.vertices.contains(vertex);
     }
     
     @Override
