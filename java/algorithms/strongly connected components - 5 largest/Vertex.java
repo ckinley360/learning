@@ -116,10 +116,19 @@ public class Vertex {
         }
         
         // Delete the extra comma and space at the end of the string.
-        output.delete(output.length() - 2, output.length());
+        if (!this.edgeTails.isEmpty()) {
+            output.delete(output.length() - 2, output.length());
+        }
         
         output.append("]");
         
         return output.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + this.name;
+        return hash;
     }
 }
