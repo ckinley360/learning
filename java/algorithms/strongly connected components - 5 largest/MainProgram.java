@@ -1,15 +1,13 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
-import java.util.Random;
-import java.sql.Timestamp;
-import java.util.Arrays;
 
 public class MainProgram {
 
     public static void main(String[] args) {
         // Create the graph from the data file.
         DirectedGraph graph = readDataFromFile("data.txt");
+        System.out.println(graph);
     }
     
     public static DirectedGraph readDataFromFile(String filePath) {
@@ -39,15 +37,14 @@ public class MainProgram {
                 }
                     
                 // Create the edge and point it at the appropriate vertices.
-                Edge edge = new Edge(graph.getVertex(tailVertex.getName()), graph.getVertex(adjacentVertex.getName()));
+                Edge edge = new Edge(graph.getVertex(tailVertex), graph.getVertex(headVertex));
                     
                 // Point the appropriate vertices at the edge.
-                graph.getVertex(vertex.getName()).addEdge(edge);
-                graph.getVertex(adjacentVertex.getName()).addEdge(edge);
+                graph.getVertex(tailVertex).addEdgeTail(edge);
+                graph.getVertex(headVertex).addEdgeHead(edge);
                     
                 // Add the edge to the graph.
                 graph.addEdge(edge);
-                }
             }
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
