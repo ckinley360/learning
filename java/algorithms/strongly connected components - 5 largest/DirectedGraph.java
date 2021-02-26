@@ -1,14 +1,18 @@
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 import java.lang.StringBuilder;
 
 public class DirectedGraph {
     
     private ArrayList<Vertex> vertices;
+    private Map<Integer, Vertex> verticesHashMap;
     private ArrayList<Edge> edges;
     
     public DirectedGraph() {
         this.vertices = new ArrayList<>();
+        this.verticesHashMap = new HashMap<>();
         this.edges = new ArrayList<>();
     }
     
@@ -20,18 +24,13 @@ public class DirectedGraph {
         return this.edges;
     }
     
-    public Vertex getVertex(Vertex compareVertex) {
-        for (Vertex vertex : this.vertices) {
-            if (vertex.getName() == compareVertex.getName()) {
-                return vertex;
-            }
-        }
-        
-        return null;
+    public Vertex getVertex(Vertex vertex) {
+        return this.verticesHashMap.get(vertex.getName());
     }
     
     public void addVertex(Vertex vertex) {
         this.vertices.add(vertex);
+        this.verticesHashMap.put(vertex.getName(), vertex);
     }
     
     public void addEdge(Edge edge) {
@@ -39,7 +38,7 @@ public class DirectedGraph {
     }
     
     public boolean hasVertex(Vertex vertex) {
-        return this.vertices.contains(vertex);
+        return this.verticesHashMap.containsKey(vertex.getName());
     }
     
     @Override
