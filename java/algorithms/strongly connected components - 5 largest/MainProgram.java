@@ -24,8 +24,6 @@ public class MainProgram {
         }
     }
     
-     
-    
     public static void depthFirstSearchLoop(DirectedGraph graph) {
         // Initialize leader to null.
         leader = null;
