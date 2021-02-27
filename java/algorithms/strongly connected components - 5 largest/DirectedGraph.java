@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import java.lang.StringBuilder;
+import java.util.Collections;
 
 public class DirectedGraph {
     
@@ -39,6 +40,41 @@ public class DirectedGraph {
     
     public boolean hasVertex(Vertex vertex) {
         return this.verticesHashMap.containsKey(vertex.getName());
+    }
+    
+    public void setVerticesExplored(boolean explored) {
+        for (Vertex vertex : this.vertices) {
+            vertex.setExplored(explored);
+        }
+    }
+    
+    public void setVerticesNamesToFinishingTime() {
+        for (Vertex vertex : this.vertices) {
+            vertex.setNameToFinishingTime();
+        }
+    }
+    
+    public ArrayList<Integer> getFiveLargestSccs() {
+        // Store the size of each SCC in sccSizes list.
+        ArrayList<Integer> sccSizes = new ArrayList<>();
+        
+        for (Vertex vertex : this.vertices) {
+            if (vertex.isLeader()) {
+                sccSizes.add(vertex.getSccSize());
+            }
+        }
+        
+        // Sort the sccSizes list descending.
+        Collections.sort(sccSizes, Collections.reverseOrder());
+        
+        // Store the top 5 largest SCCs in topFiveSccSizes list.
+        ArrayList<Integer> topFiveSccSizes = new ArrayList<>();
+        
+        for (int i = 0; i < 5; i++) {
+            topFiveSccSizes.add(sccSizes.get(i));
+        }
+        
+        return topFiveSccSizes;
     }
     
     @Override
