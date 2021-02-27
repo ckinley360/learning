@@ -70,8 +70,14 @@ public class DirectedGraph {
         // Store the top 5 largest SCCs in topFiveSccSizes list.
         ArrayList<Integer> topFiveSccSizes = new ArrayList<>();
         
-        for (int i = 0; i < 5; i++) {
+        int i = 0;
+        while (i <= 4) {
+            if (i > sccSizes.size() - 1) {
+                break;
+            }
+            
             topFiveSccSizes.add(sccSizes.get(i));
+            i++;
         }
         
         return topFiveSccSizes;
