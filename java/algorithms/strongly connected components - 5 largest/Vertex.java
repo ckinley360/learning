@@ -2,7 +2,7 @@
 import java.util.ArrayList;
 import java.lang.StringBuilder;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex> {
 
     private int name;
     private ArrayList<Edge> edgeTails;
@@ -42,6 +42,10 @@ public class Vertex {
         return this.explored;
     }
     
+    public boolean isLeader() {
+        return this.equals(this.leader);
+    }
+    
     public int getFinishingTime() {
         return this.finishingTime;
     }
@@ -72,6 +76,10 @@ public class Vertex {
     
     public void setSccSize(int sccSize) {
         this.sccSize = sccSize;
+    }
+    
+    public void setNameToFinishingTime() {
+        this.name = this.finishingTime;
     }
     
     public void removeEdgeTail(Edge edge) {
@@ -130,5 +138,16 @@ public class Vertex {
         int hash = 7;
         hash = 11 * hash + this.name;
         return hash;
+    }
+    
+    @Override
+    public int compareTo(Vertex vertex) {
+        if (this.name == vertex.getName()) {
+            return 0;
+        } else if (this.name > vertex.getName()) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
 }
