@@ -1,13 +1,51 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Collections;
+import java.util.ArrayList;
 
 public class MainProgram {
+    
+    public static int finishingTime;
 
     public static void main(String[] args) {
         // Create the graph from the data file.
         DirectedGraph graph = readDataFromFile("data.txt");
+        depthFirstSearchLoopReverse(graph);
         System.out.println(graph);
+    }
+    
+    public static void depthFirstSearchLoopReverse(DirectedGraph graph) {
+        // Create variable to set finishing time of each vertex.
+        finishingTime = 0;
+        
+        // Store the vertices list address in vertices variable.
+        ArrayList<Vertex> vertices = graph.getVertices();
+        
+        // Sort the vertices descending.
+        Collections.sort(vertices, Collections.reverseOrder());
+        
+        for (int i = 0; i < vertices.size(); i++) {
+            if (!vertices.get(i).isExplored()) {
+                depthFirstSearchReverse(graph, i);
+            }
+        }
+    }
+    
+    public static void depthFirstSearchReverse(DirectedGraph graph, Vertex startNode) {
+        // Mark start node as explored.
+        startNode.setExplored(true);
+        
+        // Explore all of start node's accessible neighbor nodes, with arcs reversed.
+        for (Edge edgeHead : startNode.getEdgeHeads()) {
+            if (!edgeHead.getTail().isExplored()) {
+                depthFirstSearchReverse(graph, edgeHead.getTail());
+            }
+        }
+        
+        // Set the finishing time of the start node.
+        finishingTime++;
+        startNode.setFinishingTime(finishingTime);
     }
     
     public static DirectedGraph readDataFromFile(String filePath) {
