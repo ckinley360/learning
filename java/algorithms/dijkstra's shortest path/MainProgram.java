@@ -6,6 +6,7 @@ public class MainProgram {
 
     public static void main(String[] args) {
         Graph graph = readDataFromFile("data.txt");
+        MinHeap minHeap = new MinHeap();
         
         System.out.println(graph);
     }
