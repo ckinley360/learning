@@ -17,6 +17,10 @@ public class VertexScorePair {
         return this.score;
     }
     
+    public void setVertex(Vertex vertex) {
+        this.vertex = vertex;
+    }
+    
     public void setScore(int score) {
         this.score = score;
     }
