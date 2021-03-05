@@ -6,7 +6,7 @@ public class MinHeap {
     private int capacity = 10;
     private int size = 0;
     
-    int[] items = new int[capacity];
+    VertexScorePair[] items = new VertexScorePair[capacity];
     
     private int getLeftChildIndex(int parentIndex) { return 2 * parentIndex + 1; }
     private int getRightChildIndex(int parentIndex) { return 2 * parentIndex + 2; }
@@ -16,12 +16,12 @@ public class MinHeap {
     private boolean hasRightChild(int index) { return getRightChildIndex(index) < size; }
     private boolean hasParent(int index) { return getParentIndex(index) >= 0; }
     
-    private int leftChild(int index) { return items[getLeftChildIndex(index)]; }
-    private int rightChild(int index) { return items[getRightChildIndex(index)]; }
-    private int parent(int index) { return items[getParentIndex(index)]; }
+    private VertexScorePair leftChild(int index) { return items[getLeftChildIndex(index)]; }
+    private VertexScorePair rightChild(int index) { return items[getRightChildIndex(index)]; }
+    private VertexScorePair parent(int index) { return items[getParentIndex(index)]; }
     
     private void swap(int indexOne, int indexTwo) {
-        int temp = items[indexOne];
+        VertexScorePair temp = items[indexOne];
         items[indexOne] = items[indexTwo];
         items[indexTwo] = temp;
     }
@@ -33,21 +33,21 @@ public class MinHeap {
         }
     }
     
-    public int peek() {
+    public VertexScorePair peek() {
         if (size == 0) throw new IllegalStateException();
         return items[0];
     }
     
-    public int poll() {
+    public VertexScorePair poll() {
         if (size == 0) throw new IllegalStateException();
-        int item = items[0];
+        VertexScorePair item = items[0];
         items[0] = items[size - 1];
         size--;
         heapifyDown();
         return item;
     }
     
-    public void add(int item) {
+    public void add(VertexScorePair item) {
         ensureExtraCapacity();
         items[size] = item;
         size++;
@@ -56,7 +56,7 @@ public class MinHeap {
     
     public void heapifyUp() {
         int index = size - 1;
-        while (hasParent(index) && parent(index) > items[index]) {
+        while (hasParent(index) && parent(index).getScore() > items[index].getScore()) {
             swap(getParentIndex(index), index);
             index = getParentIndex(index);
         }
@@ -66,11 +66,11 @@ public class MinHeap {
         int index = 0;
         while (hasLeftChild(index)) {
             int smallerChildIndex = getLeftChildIndex(index);
-            if (hasRightChild(index) && rightChild(index) < leftChild(index)) {
+            if (hasRightChild(index) && rightChild(index).getScore() < leftChild(index).getScore()) {
                 smallerChildIndex = getRightChildIndex(index);
             }
             
-            if (items[index] < items[smallerChildIndex]) {
+            if (items[index].getScore() < items[smallerChildIndex].getScore()) {
                 break;
             } else {
                 swap(index, smallerChildIndex);
