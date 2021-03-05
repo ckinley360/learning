@@ -54,6 +54,15 @@ public class MinHeap {
         heapifyUp();
     }
     
+    public void deleteFromMiddle(int index) {
+        while (hasParent(index)) {
+            swap(getParentIndex(index), index);
+            index = getParentIndex(index);
+        }
+        
+        poll();
+    }
+    
     public void heapifyUp() {
         int index = size - 1;
         while (hasParent(index) && parent(index).getScore() > items[index].getScore()) {
