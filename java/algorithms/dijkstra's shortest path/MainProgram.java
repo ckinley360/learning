@@ -5,13 +5,39 @@ import java.util.Scanner;
 public class MainProgram {
 
     public static void main(String[] args) {
+        // Create the graph from the data file.
         Graph graph = readDataFromFile("data.txt");
-        MinHeap minHeap = new MinHeap();
         
-        System.out.println(graph);
+        // Create the min heap and add the graph's vertices to it.
+        MinHeap minHeap = createMinHeapFromGraph(graph, 1);
+        
+        // Print the vertices in the min heap in ascending order.
+        for (int i = 1; i <= 200; i++) {
+            System.out.println(minHeap.poll().getVertex().getName());
+        }
     }
     
-    // Need a solution for dealing with duplicate connections (e.g. vertex 90 > vertex 4, vertex 4 > vertex 90).
+    public static void computeShortestPathDistances(MinHeap minHeap) {
+        
+    }
+    
+    public static MinHeap createMinHeapFromGraph(Graph graph, int startVertexName) {
+        MinHeap minHeap = new MinHeap();
+        
+        for (Vertex vertex : graph.getVertices().values()) {
+            VertexScorePair pair = new VertexScorePair(null, 1000000);
+            pair.setVertex(vertex);
+            
+            if (vertex.getName() == startVertexName) {
+                pair.setScore(0);
+            }
+            
+            minHeap.add(pair);
+        }
+        
+        return minHeap;
+    }
+    
     public static Graph readDataFromFile(String filePath) {
         // Create the Graph object to store the data.
         Graph graph = new Graph();
