@@ -1,7 +1,6 @@
 
 import java.util.Objects;
 
-
 public class VertexScorePair {
 
     private Vertex vertex;
