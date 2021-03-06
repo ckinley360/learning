@@ -9,11 +9,12 @@ public class MinHeap {
     private int size = 0;
     
     VertexScorePair[] items = new VertexScorePair[capacity];
-    Map<VertexScorePair, Integer> indexTracker = new HashMap<>();
+    Map<Integer, Integer> indexTracker = new HashMap<>();
     
     private int getLeftChildIndex(int parentIndex) { return 2 * parentIndex + 1; }
     private int getRightChildIndex(int parentIndex) { return 2 * parentIndex + 2; }
     private int getParentIndex(int childIndex) { return (childIndex - 1) / 2; }
+    private int getIndex(int vertexName) { return indexTracker.get(vertexName); }
     
     private boolean hasLeftChild(int index) { return getLeftChildIndex(index) < size; }
     private boolean hasRightChild(int index) { return getRightChildIndex(index) < size; }
@@ -25,8 +26,8 @@ public class MinHeap {
     
     private void swap(int indexOne, int indexTwo) {
         // To track the indices for the two pairs.
-        indexTracker.put(items[indexOne], indexTwo);
-        indexTracker.put(items[indexTwo], indexOne);
+        indexTracker.put(items[indexOne].getVertex().getName(), indexTwo);
+        indexTracker.put(items[indexTwo].getVertex().getName(), indexOne);
         
         VertexScorePair temp = items[indexOne];
         items[indexOne] = items[indexTwo];
@@ -48,7 +49,7 @@ public class MinHeap {
     public VertexScorePair poll() {
         if (size == 0) throw new IllegalStateException();
         VertexScorePair item = items[0];
-        indexTracker.put(items[size - 1], 0); // To track the index for this pair.
+        indexTracker.put(items[size - 1].getVertex().getName(), 0); // To track the index for this pair.
         items[0] = items[size - 1];
         size--;
         heapifyDown();
@@ -58,7 +59,7 @@ public class MinHeap {
     public void add(VertexScorePair item) {
         ensureExtraCapacity();
         items[size] = item;
-        indexTracker.put(item, size); // To track the index for this pair.
+        indexTracker.put(item.getVertex().getName(), size); // To track the index for this pair.
         size++;
         heapifyUp();
     }
