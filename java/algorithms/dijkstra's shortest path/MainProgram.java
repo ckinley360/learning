@@ -3,6 +3,7 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 import java.util.HashMap;
+import java.lang.StringBuilder;
 
 public class MainProgram {
 
@@ -15,16 +16,20 @@ public class MainProgram {
 
         // Compute the shortest path distances.
         Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
-//        System.out.println(shortestPathDistances.get(7));
-//        System.out.println(shortestPathDistances.get(37));
-//        System.out.println(shortestPathDistances.get(59));
-//        System.out.println(shortestPathDistances.get(82));
-//        System.out.println(shortestPathDistances.get(99));
-//        System.out.println(shortestPathDistances.get(115));
-//        System.out.println(shortestPathDistances.get(133));
-//        System.out.println(shortestPathDistances.get(165));
-//        System.out.println(shortestPathDistances.get(188));
-//        System.out.println(shortestPathDistances.get(197));
+        
+        // Output the shortest paths to the target vertices.
+        StringBuilder output = new StringBuilder();
+        output.append(shortestPathDistances.get(7) + ",");
+        output.append(shortestPathDistances.get(37) + ",");
+        output.append(shortestPathDistances.get(59) + ",");
+        output.append(shortestPathDistances.get(82) + ",");
+        output.append(shortestPathDistances.get(99) + ",");
+        output.append(shortestPathDistances.get(115) + ",");
+        output.append(shortestPathDistances.get(133) + ",");
+        output.append(shortestPathDistances.get(165) + ",");
+        output.append(shortestPathDistances.get(188) + ",");
+        output.append(shortestPathDistances.get(197));
+        System.out.println(output.toString());
     }
     
     public static Map<Integer, Integer> computeShortestPathDistances(MinHeap minHeap) {
@@ -34,57 +39,48 @@ public class MainProgram {
             // Grab the node with the lowest Dijkstra greedy score.
             VertexScorePair pair = minHeap.poll();
             
-            // Create HashMap to track which nodes we need to recompute Djikstra greedy score for.
-            Map<Integer, Integer> adjacentVertices = new HashMap<>();
-            
             // Add the node and its Dijkstra greedy score to the hash map to track its distance from the start node.
             shortestPathDistances.put(pair.getVertex().getName(), pair.getScore());
+            
+            // Create HashMap to track which nodes we need to recompute Djikstra greedy score for.
+            Map<Integer, Integer> adjacentVertices = new HashMap<>();
             
             // For every node "across the frontier" that is adjacent to the node we just grabbed, recompute its Dijkstra greedy score.
             for (Edge edge : pair.getVertex().getEdges()) {
                 if (!shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
                     // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
                     adjacentVertices.put(edge.getEndpointOne().getName(), 0);
-                    System.out.println("Vertex " + pair.getVertex().getName() + " connected to vertex " + edge.getEndpointOne().getName());
                 }
                 
                 if (!shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
                     // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
                     adjacentVertices.put(edge.getEndpointTwo().getName(), 0);
-                    System.out.println("Vertex " + pair.getVertex().getName() + " connected to vertex " + edge.getEndpointTwo().getName());
                 }
             }
             
             // Recompute the greedy scores for the necessary vertices.
             for (int vertexName : adjacentVertices.keySet()) {
-                System.out.println("Vertex: " + vertexName);
                 VertexScorePair adjacentPair = minHeap.getPair(minHeap.getIndex(vertexName));
                 Vertex adjacentVertex = adjacentPair.getVertex();
-                System.out.println("Vertex Check: " + adjacentVertex.getName());
-                System.out.println("Vertex " + vertexName + " is in index " + minHeap.getIndex(vertexName));
-//                System.out.println(adjacentVertex);
-                System.out.println("");
                 MinHeap localMinHeap = new MinHeap();
                 
                 for (Edge edge : adjacentVertex.getEdges()) {
-                    if (shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
-                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointOne().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
+                    if (shortestPathDistances.containsKey(edge.getEndpointOne().getName())) { // Need to look at ALL connected vertices in X, not just the one that just got Polled.
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength() + shortestPathDistances.get(edge.getEndpointOne().getName())); // Need to add the score of the corresponding vertex in X.
                         localMinHeap.add(localContestant);
-                        System.out.println("Add endpoint one: " + edge.getEndpointOne().getName());
                     }
                     
                     if (shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
-                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointTwo().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength() + shortestPathDistances.get(edge.getEndpointTwo().getName())); // Need to add the score of the corresponding vertex in X.
                         localMinHeap.add(localContestant);
-                        System.out.println("Add endpoint two: " + edge.getEndpointTwo().getName());
                     }
                 }
                 
                 adjacentPair.setScore(localMinHeap.poll().getScore());
-                System.out.println("");
                 
                 // Delete the pair from the min heap and re-add it to maintain the heap property.
                 minHeap.deleteFromMiddle(minHeap.getIndex(vertexName));
+                minHeap.add(adjacentPair);
             }
         }
         
