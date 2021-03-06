@@ -51,7 +51,26 @@ public class MainProgram {
             
             // Recompute the greedy scores for the necessary vertices.
             for (int vertexName : adjacentVertices.keySet()) {
+                VertexScorePair adjacentPair = minHeap.getPair(minHeap.getIndex(vertexName));
+                Vertex adjacentVertex = adjacentPair.getVertex();
+                MinHeap localMinHeap = new MinHeap();
                 
+                for (Edge edge : adjacentVertex.getEdges()) {
+                    if (shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointOne().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
+                        localMinHeap.add(localContestant);
+                    }
+                    
+                    if (shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointTwo().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
+                        localMinHeap.add(localContestant);
+                    }
+                }
+                
+                adjacentPair.setScore(localMinHeap.poll().getScore());
+                
+                // Delete the pair from the min heap and re-add it to maintain the heap property.
+                minHeap.deleteFromMiddle(minHeap.getIndex(vertexName));
             }
         }
         
