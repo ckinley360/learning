@@ -1,6 +1,8 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.Map;
+import java.util.HashMap;
 
 public class MainProgram {
 
@@ -12,13 +14,41 @@ public class MainProgram {
         MinHeap minHeap = createMinHeapFromGraph(graph, 1);
         
         // Print the vertices in the min heap in ascending order.
-        for (int i = 1; i <= 200; i++) {
-            System.out.println(minHeap.poll().getVertex().getName());
-        }
+//        for (int i = 1; i <= 200; i++) {
+//            System.out.println(minHeap.poll().getVertex().getName());
+//        }
+
+        // Compute the shortest path distances.
+        Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
+        System.out.println(shortestPathDistances.get(1));
     }
     
-    public static void computeShortestPathDistances(MinHeap minHeap) {
+    public static Map<Integer, Integer> computeShortestPathDistances(MinHeap minHeap) {
+        Map<Integer, Integer> shortestPathDistances = new HashMap<>();
         
+        while (!minHeap.isEmpty()) {
+            // Grab the node with the lowest Dijkstra greedy score.
+            VertexScorePair pair = minHeap.poll();
+            
+            // Create HashMap to track which nodes we need to recompute Djikstra greedy score for.
+            
+            
+            // Add the node and its Dijkstra greedy score to the hash map to track its distance from the start node.
+            shortestPathDistances.put(pair.getVertex().getName(), pair.getScore());
+            
+            // For every node "across the frontier" that is adjacent to the node we just grabbed, recompute its Dijkstra greedy score.
+            for (Edge edge : pair.getVertex().getEdges()) {
+                if (!shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
+                    // Recompute greedy score
+                }
+                
+                if (!shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
+                    // Recompute greedy score
+                }
+            }
+        }
+        
+        return shortestPathDistances;
     }
     
     public static MinHeap createMinHeapFromGraph(Graph graph, int startVertexName) {
