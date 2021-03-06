@@ -31,7 +31,7 @@ public class MainProgram {
             VertexScorePair pair = minHeap.poll();
             
             // Create HashMap to track which nodes we need to recompute Djikstra greedy score for.
-            
+            Map<Integer, Integer> adjacentVertices = new HashMap<>();
             
             // Add the node and its Dijkstra greedy score to the hash map to track its distance from the start node.
             shortestPathDistances.put(pair.getVertex().getName(), pair.getScore());
@@ -39,12 +39,19 @@ public class MainProgram {
             // For every node "across the frontier" that is adjacent to the node we just grabbed, recompute its Dijkstra greedy score.
             for (Edge edge : pair.getVertex().getEdges()) {
                 if (!shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
-                    // Recompute greedy score
+                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
+                    adjacentVertices.put(edge.getEndpointOne().getName(), 0);
                 }
                 
                 if (!shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
-                    // Recompute greedy score
+                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
+                    adjacentVertices.put(edge.getEndpointTwo().getName(), 0);
                 }
+            }
+            
+            // Recompute the greedy scores for the necessary vertices.
+            for (int vertexName : adjacentVertices.keySet()) {
+                
             }
         }
         
