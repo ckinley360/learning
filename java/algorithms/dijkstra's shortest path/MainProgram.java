@@ -12,15 +12,19 @@ public class MainProgram {
         
         // Create the min heap and add the graph's vertices to it.
         MinHeap minHeap = createMinHeapFromGraph(graph, 1);
-        
-        // Print the vertices in the min heap in ascending order.
-//        for (int i = 1; i <= 200; i++) {
-//            System.out.println(minHeap.poll().getVertex().getName());
-//        }
 
         // Compute the shortest path distances.
         Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
-        System.out.println(shortestPathDistances.get(1));
+//        System.out.println(shortestPathDistances.get(7));
+//        System.out.println(shortestPathDistances.get(37));
+//        System.out.println(shortestPathDistances.get(59));
+//        System.out.println(shortestPathDistances.get(82));
+//        System.out.println(shortestPathDistances.get(99));
+//        System.out.println(shortestPathDistances.get(115));
+//        System.out.println(shortestPathDistances.get(133));
+//        System.out.println(shortestPathDistances.get(165));
+//        System.out.println(shortestPathDistances.get(188));
+//        System.out.println(shortestPathDistances.get(197));
     }
     
     public static Map<Integer, Integer> computeShortestPathDistances(MinHeap minHeap) {
@@ -41,33 +45,43 @@ public class MainProgram {
                 if (!shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
                     // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
                     adjacentVertices.put(edge.getEndpointOne().getName(), 0);
+                    System.out.println("Vertex " + pair.getVertex().getName() + " connected to vertex " + edge.getEndpointOne().getName());
                 }
                 
                 if (!shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
                     // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
                     adjacentVertices.put(edge.getEndpointTwo().getName(), 0);
+                    System.out.println("Vertex " + pair.getVertex().getName() + " connected to vertex " + edge.getEndpointTwo().getName());
                 }
             }
             
             // Recompute the greedy scores for the necessary vertices.
             for (int vertexName : adjacentVertices.keySet()) {
+                System.out.println("Vertex: " + vertexName);
                 VertexScorePair adjacentPair = minHeap.getPair(minHeap.getIndex(vertexName));
                 Vertex adjacentVertex = adjacentPair.getVertex();
+                System.out.println("Vertex Check: " + adjacentVertex.getName());
+                System.out.println("Vertex " + vertexName + " is in index " + minHeap.getIndex(vertexName));
+//                System.out.println(adjacentVertex);
+                System.out.println("");
                 MinHeap localMinHeap = new MinHeap();
                 
                 for (Edge edge : adjacentVertex.getEdges()) {
                     if (shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
                         VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointOne().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
                         localMinHeap.add(localContestant);
+                        System.out.println("Add endpoint one: " + edge.getEndpointOne().getName());
                     }
                     
                     if (shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
                         VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength() + minHeap.getPair(minHeap.getIndex(edge.getEndpointTwo().getName())).getScore()); // Need to add the score of the corresponding vertex in X.
                         localMinHeap.add(localContestant);
+                        System.out.println("Add endpoint two: " + edge.getEndpointTwo().getName());
                     }
                 }
                 
                 adjacentPair.setScore(localMinHeap.poll().getScore());
+                System.out.println("");
                 
                 // Delete the pair from the min heap and re-add it to maintain the heap property.
                 minHeap.deleteFromMiddle(minHeap.getIndex(vertexName));
