@@ -9,12 +9,12 @@ public class MinHeap {
     private int size = 0;
     
     VertexScorePair[] items = new VertexScorePair[capacity];
-    Map<Integer, Integer> indexTracker = new HashMap<>();
+    Map<Integer, Integer> indexTracker = new HashMap<>(); // Vertex name : Index
     
     private int getLeftChildIndex(int parentIndex) { return 2 * parentIndex + 1; }
     private int getRightChildIndex(int parentIndex) { return 2 * parentIndex + 2; }
     private int getParentIndex(int childIndex) { return (childIndex - 1) / 2; }
-    private int getIndex(int vertexName) { return indexTracker.get(vertexName); }
+    public int getIndex(int vertexName) { return indexTracker.get(vertexName); }
     
     private boolean hasLeftChild(int index) { return getLeftChildIndex(index) < size; }
     private boolean hasRightChild(int index) { return getRightChildIndex(index) < size; }
@@ -23,6 +23,7 @@ public class MinHeap {
     private VertexScorePair leftChild(int index) { return items[getLeftChildIndex(index)]; }
     private VertexScorePair rightChild(int index) { return items[getRightChildIndex(index)]; }
     private VertexScorePair parent(int index) { return items[getParentIndex(index)]; }
+    public VertexScorePair getPair(int index) { return items[index]; }
     
     private void swap(int indexOne, int indexTwo) {
         // To track the indices for the two pairs.
@@ -49,6 +50,7 @@ public class MinHeap {
     public VertexScorePair poll() {
         if (size == 0) throw new IllegalStateException();
         VertexScorePair item = items[0];
+        indexTracker.remove(items[0].getVertex().getName()); // Remove items[0] from the hashmap since it is being removed from the min heap.
         indexTracker.put(items[size - 1].getVertex().getName(), 0); // To track the index for this pair.
         items[0] = items[size - 1];
         size--;
@@ -65,7 +67,7 @@ public class MinHeap {
     }
     
     public void deleteFromMiddle(int index) {
-        while (hasParent(index)) {
+        while (hasParent(index) && index != 0) {
             swap(getParentIndex(index), index);
             index = getParentIndex(index);
         }
