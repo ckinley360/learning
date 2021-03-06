@@ -1,5 +1,7 @@
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.HashMap;
 
 public class MinHeap {
 
@@ -7,6 +9,7 @@ public class MinHeap {
     private int size = 0;
     
     VertexScorePair[] items = new VertexScorePair[capacity];
+    Map<VertexScorePair, Integer> indexTracker = new HashMap<>();
     
     private int getLeftChildIndex(int parentIndex) { return 2 * parentIndex + 1; }
     private int getRightChildIndex(int parentIndex) { return 2 * parentIndex + 2; }
@@ -21,6 +24,10 @@ public class MinHeap {
     private VertexScorePair parent(int index) { return items[getParentIndex(index)]; }
     
     private void swap(int indexOne, int indexTwo) {
+        // To track the indices for the two pairs.
+        indexTracker.put(items[indexOne], indexTwo);
+        indexTracker.put(items[indexTwo], indexOne);
+        
         VertexScorePair temp = items[indexOne];
         items[indexOne] = items[indexTwo];
         items[indexTwo] = temp;
@@ -41,6 +48,7 @@ public class MinHeap {
     public VertexScorePair poll() {
         if (size == 0) throw new IllegalStateException();
         VertexScorePair item = items[0];
+        indexTracker.put(items[size - 1], 0); // To track the index for this pair.
         items[0] = items[size - 1];
         size--;
         heapifyDown();
@@ -50,6 +58,7 @@ public class MinHeap {
     public void add(VertexScorePair item) {
         ensureExtraCapacity();
         items[size] = item;
+        indexTracker.put(item, size); // To track the index for this pair.
         size++;
         heapifyUp();
     }
@@ -87,5 +96,9 @@ public class MinHeap {
             
             index = smallerChildIndex;
         }
+    }
+    
+    public boolean isEmpty() {
+        return size == 0;
     }
 }
