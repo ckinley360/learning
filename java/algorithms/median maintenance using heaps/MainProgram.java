@@ -16,7 +16,7 @@ public class MainProgram {
         // Create a min heap object.
         MinHeap minHeap = new MinHeap();
         
-        // Insert the first number of the data into the max heap.
+        // Insert the first number of the data arbitrarily into the max heap.
         maxHeap.add(data.get(0));
         
         // Add the rest of the numbers to the min and max heaps.
@@ -33,15 +33,10 @@ public class MainProgram {
             
             // Rebalance the heaps as needed.
             rebalanceHeaps(maxHeap, minHeap);
+            
+            // Output the current median.
+            System.out.println(computeMedian(maxHeap, minHeap));
         }
-        
-        // Print out the min.
-        System.out.println("Min: " + minHeap.poll());
-        
-        System.out.println("");
-        
-        // Print out the max.
-        System.out.println("Max: " + maxHeap.poll());
     }
     
     public static void rebalanceHeaps(MaxHeap maxHeap, MinHeap minHeap) {
@@ -58,8 +53,18 @@ public class MainProgram {
         }
     }
     
-    public static int computeMedian(MinHeap minHeap, MaxHeap maxHeap) {
+    public static int computeMedian(MaxHeap maxHeap, MinHeap minHeap) {
+         // If the total number of elements is even, then return the max of the max heap.
+        if ((maxHeap.getSize() + minHeap.getSize()) % 2 == 0) {
+            return maxHeap.peek();
+        }
         
+        // If the total number of elements is odd, then return the extract value of whichever heap has the most elements.
+        if (maxHeap.getSize() > minHeap.getSize()) {
+            return maxHeap.peek();
+        } else {
+            return minHeap.peek();
+        }
     }
     
     public static List<Integer> readDataFromFile(String filePath) {
