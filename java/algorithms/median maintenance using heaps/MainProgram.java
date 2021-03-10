@@ -16,16 +16,21 @@ public class MainProgram {
         // Create a min heap object.
         MinHeap minHeap = new MinHeap();
         
+        // Create the sum variable to tally up the sum of the medians.
+        int sum = 0;
+        
         // Insert the first number of the data arbitrarily into the max heap.
         maxHeap.add(data.get(0));
         
+        // Add the first median to the sum.
+        sum += computeMedian(maxHeap, minHeap);
+        
         // Add the rest of the numbers to the min and max heaps.
         for (int i = 1; i < data.size(); i++) {
-            
             // Insert the number into the appropriate heap.
             if (data.get(i) > maxHeap.peek()) { // If the number is larger than the max of the max heap, insert into the min heap.
                 minHeap.add(data.get(i));
-            } else if (data.get(i) < minHeap.peek()) { // If the number is smaller than the min of the min heap, insert into the max heap.
+            } else if (minHeap.isEmpty() || data.get(i) < minHeap.peek()) { // If min heap is empty (meaning this is the 2nd number of the data and it is less than or equal to the max of the max heap) OR if the number is smaller than the min of the min heap, insert into the max heap.
                 maxHeap.add(data.get(i));
             } else { // If the number is between the max of the max heap and the min of the min heap, insert arbitrarily into the max heap.
                 maxHeap.add(data.get(i));
@@ -34,9 +39,12 @@ public class MainProgram {
             // Rebalance the heaps as needed.
             rebalanceHeaps(maxHeap, minHeap);
             
-            // Output the current median.
-            System.out.println(computeMedian(maxHeap, minHeap));
+            // Add the current median to the sum.
+            sum += computeMedian(maxHeap, minHeap);
         }
+        
+        // Output the sum.
+        System.out.println("Sum: " + sum);
     }
     
     public static void rebalanceHeaps(MaxHeap maxHeap, MinHeap minHeap) {
