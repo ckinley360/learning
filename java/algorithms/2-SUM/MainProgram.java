@@ -14,7 +14,9 @@ public class MainProgram {
         // Create a sorted array from the data.
         long[] sortedData = createSortedArray(data);
         
-
+        // Compute and output the count of distinct 2-SUMs.
+        int distinctSums = computeDistinctSums(sortedData);
+        System.out.println(distinctSums);
     }
     
     public static int computeDistinctSums(long[] sortedData) {
