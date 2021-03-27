@@ -60,6 +60,6 @@ public class Edge {
     
     @Override
     public String toString() {
-        return ("Endpoint One: " + this.endpointOne.getName() + ", Endpoint Two: " + this.endpointTwo.getName());
+        return (this.endpointOne.getName() + " " + this.endpointTwo.getName() + " " + this.length);
     }
 }
