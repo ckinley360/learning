@@ -7,8 +7,8 @@ public class MainProgram {
     
     public static void main(String[] args) {
         // Create the Job arrays.
-        Job[] jobs = readDataFromFile("testdata.txt", "difference");
-        Job[] jobs2 = readDataFromFile("testdata.txt", "quotient");
+        Job[] jobs = readDataFromFile("data.txt", "difference");
+        Job[] jobs2 = readDataFromFile("data.txt", "quotient");
         
         // Sort the Job arrays based on score.
         Arrays.sort(jobs);
@@ -38,7 +38,7 @@ public class MainProgram {
     
     public static Job[] readDataFromFile(String filePath, String scoreType) {
         // Create the Job array to store the jobs in.
-        Job[] jobs = new Job[40];
+        Job[] jobs = new Job[10000];
         
         // Create index tracker for the Job array.
         int i = 0;
