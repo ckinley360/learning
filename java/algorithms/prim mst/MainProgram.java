@@ -146,7 +146,7 @@ public class MainProgram {
                     
                 // If the edge already exists in the graph, that means that this specific connection between vertex and adjacent vertex already exists in the graph. Do not add a duplicate.
                 if (!graph.hasEdge(edge)) {
-                    // Point the appropriate vertices at the edge.
+                    // Point the vertex and adjacent vertex at the edge.
                     graph.getVertex(vertex.getName()).addEdge(edge);
                     graph.getVertex(adjacentVertex.getName()).addEdge(edge);
                     
