@@ -3,8 +3,7 @@ public class Job implements Comparable<Job> {
 
     private int weight;
     private int length;
-    private int score;
-    private int completionTime;
+    private double score;
 
     public Job(int weight, int length, String scoreType) {
         this.weight = weight;
@@ -26,22 +25,18 @@ public class Job implements Comparable<Job> {
         return this.length;
     }
     
-    public int getScore() {
+    public double getScore() {
         return this.score;
     }
     
-    public void setCompletionTime(int completionTime) {
-        this.completionTime = completionTime;
-    }
-    
     // Computes score based on the difference of the job's weight and length.
-    private int computeDifferenceScore() {
-        return this.weight - this.length;
+    private double computeDifferenceScore() {
+        return (double) this.weight - this.length;
     }
     
     // Computes score based on the quotient of the job's weight and length.
-    private int computeQuotientScore() {
-        return this.weight / this.length;
+    private double computeQuotientScore() {
+        return (double) this.weight / this.length;
     }
     
     @Override
@@ -60,5 +55,10 @@ public class Job implements Comparable<Job> {
         } else { // If this score is lower, then this comes after.
             return 1;
         }
+    }
+    
+    @Override
+    public String toString() {
+        return this.weight + " " + this.length;
     }
 }
