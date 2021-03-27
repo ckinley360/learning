@@ -85,7 +85,7 @@ public class MainProgram {
     }
     
     public static Map<Long, Long> readDataFromFile(String filePath) {
-        // Create the long array to store the data.
+        // Create the long map to store the data.
         Map<Long, Long> data = new HashMap<>();
         
         // Create a Scanner object for reading the file.
