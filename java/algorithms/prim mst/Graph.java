@@ -67,8 +67,8 @@ public class Graph {
     public String toString() {
         StringBuilder output = new StringBuilder();
         
-        for (Vertex vertex:this.vertices.values()) {
-            output.append(vertex.toString());
+        for (Edge edge : this.edges) {
+            output.append(edge.toString());
             output.append("\n");
         }
         
