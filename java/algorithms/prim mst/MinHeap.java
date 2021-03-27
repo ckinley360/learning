@@ -8,8 +8,8 @@ public class MinHeap {
     private int capacity = 10;
     private int size = 0;
     
-    VertexScorePair[] items = new VertexScorePair[capacity];
-    Map<Integer, Integer> indexTracker = new HashMap<>(); // Vertex name : Index
+    private VertexScorePair[] items = new VertexScorePair[capacity];
+    private Map<Integer, Integer> indexTracker = new HashMap<>(); // Vertex name : Index
     
     private int getLeftChildIndex(int parentIndex) { return 2 * parentIndex + 1; }
     private int getRightChildIndex(int parentIndex) { return 2 * parentIndex + 2; }
