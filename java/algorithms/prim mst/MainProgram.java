@@ -9,34 +9,38 @@ public class MainProgram {
 
     public static void main(String[] args) {
         // Create the graph from the data file.
-        Graph graph = readDataFromFile("data.txt");
+        Graph graph = readDataFromFile("edges.txt");
         
         // Create the min heap and add the graph's vertices to it.
         MinHeap minHeap = createMinHeapFromGraph(graph, 1);
 
         // Compute the shortest path distances.
-        Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
+//        Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
         
         // Output the shortest paths to the target vertices.
-        StringBuilder output = new StringBuilder();
-        output.append(shortestPathDistances.get(7) + ",");
-        output.append(shortestPathDistances.get(37) + ",");
-        output.append(shortestPathDistances.get(59) + ",");
-        output.append(shortestPathDistances.get(82) + ",");
-        output.append(shortestPathDistances.get(99) + ",");
-        output.append(shortestPathDistances.get(115) + ",");
-        output.append(shortestPathDistances.get(133) + ",");
-        output.append(shortestPathDistances.get(165) + ",");
-        output.append(shortestPathDistances.get(188) + ",");
-        output.append(shortestPathDistances.get(197));
-        System.out.println(output.toString());
+//        StringBuilder output = new StringBuilder();
+//        output.append(shortestPathDistances.get(7) + ",");
+//        output.append(shortestPathDistances.get(37) + ",");
+//        output.append(shortestPathDistances.get(59) + ",");
+//        output.append(shortestPathDistances.get(82) + ",");
+//        output.append(shortestPathDistances.get(99) + ",");
+//        output.append(shortestPathDistances.get(115) + ",");
+//        output.append(shortestPathDistances.get(133) + ",");
+//        output.append(shortestPathDistances.get(165) + ",");
+//        output.append(shortestPathDistances.get(188) + ",");
+//        output.append(shortestPathDistances.get(197));
+//        System.out.println(output.toString());
     }
     
-    public static Map<Integer, Integer> computeShortestPathDistances(MinHeap minHeap) {
-        Map<Integer, Integer> shortestPathDistances = new HashMap<>();
+    public static int computeMstCost(MinHeap minHeap) {
+        // To track the overall cost of the MST.
+        int mstCost = 0;
+        
+        // To track which nodes have been spanned by the MST. The Boolean value is arbitrary.
+        Map<Integer, Boolean> spannedVertices = new HashMap<>();
         
         while (!minHeap.isEmpty()) {
-            // Grab the node with the lowest Dijkstra greedy score.
+            // Grab the node with the lowest edge length.
             VertexScorePair pair = minHeap.poll();
             
             // Add the node and its Dijkstra greedy score to the hash map to track its distance from the start node.
@@ -84,7 +88,7 @@ public class MainProgram {
             }
         }
         
-        return shortestPathDistances;
+        return mstCost;
     }
     
     public static MinHeap createMinHeapFromGraph(Graph graph, int startVertexName) {
