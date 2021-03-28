@@ -3,7 +3,6 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 import java.util.HashMap;
-import java.lang.StringBuilder;
 
 public class MainProgram {
 
@@ -14,22 +13,11 @@ public class MainProgram {
         // Create the min heap and add the graph's vertices to it.
         MinHeap minHeap = createMinHeapFromGraph(graph, 1);
 
-        // Compute the shortest path distances.
-//        Map<Integer, Integer> shortestPathDistances = computeShortestPathDistances(minHeap);
+        // Compute the MST cost.
+        int mstCost = computeMstCost(minHeap);
         
-        // Output the shortest paths to the target vertices.
-//        StringBuilder output = new StringBuilder();
-//        output.append(shortestPathDistances.get(7) + ",");
-//        output.append(shortestPathDistances.get(37) + ",");
-//        output.append(shortestPathDistances.get(59) + ",");
-//        output.append(shortestPathDistances.get(82) + ",");
-//        output.append(shortestPathDistances.get(99) + ",");
-//        output.append(shortestPathDistances.get(115) + ",");
-//        output.append(shortestPathDistances.get(133) + ",");
-//        output.append(shortestPathDistances.get(165) + ",");
-//        output.append(shortestPathDistances.get(188) + ",");
-//        output.append(shortestPathDistances.get(197));
-//        System.out.println(output.toString());
+        // Output the MST cost.
+        System.out.println("MST Cost: " + mstCost);
     }
     
     public static int computeMstCost(MinHeap minHeap) {
