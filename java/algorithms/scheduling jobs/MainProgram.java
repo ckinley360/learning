@@ -15,25 +15,25 @@ public class MainProgram {
         Arrays.sort(jobs2);
         
         // Compute the completion time of each job.
-        int sumOfWeightedCompletionTimes = computeSumOfWeightedCompletionTimes(jobs);
-        int sumOfWeightedCompletionTimes2 = computeSumOfWeightedCompletionTimes(jobs2);
+        long sumOfWeightedCompletionTimes = computeSumOfWeightedCompletionTimes(jobs);
+        long sumOfWeightedCompletionTimes2 = computeSumOfWeightedCompletionTimes(jobs2);
         
         // Print the sum of weighted completion times.
         System.out.println("Sum of weighted completion times (difference): " + sumOfWeightedCompletionTimes);
         System.out.println("Sum of weighted completion times (quotient): " + sumOfWeightedCompletionTimes2);
     }
     
-    public static int computeSumOfWeightedCompletionTimes(Job[] jobs) {
+    public static long computeSumOfWeightedCompletionTimes(Job[] jobs) {
         // Variable to track the running total of completion time.
         int completionTime = 0;
-        double sumOfWeightedCompletionTimes = 0;
+        long sumOfWeightedCompletionTimes = 0;
         
         for (Job job : jobs) {
             completionTime += job.getLength();
-            sumOfWeightedCompletionTimes += (double) job.getWeight() * completionTime;
+            sumOfWeightedCompletionTimes += job.getWeight() * completionTime;
         }
         
-        return (int) sumOfWeightedCompletionTimes;
+        return sumOfWeightedCompletionTimes;
     }
     
     public static Job[] readDataFromFile(String filePath, String scoreType) {
