@@ -43,39 +43,40 @@ public class MainProgram {
             // Grab the node with the lowest edge length.
             VertexScorePair pair = minHeap.poll();
             
-            // Add the node and its Dijkstra greedy score to the hash map to track its distance from the start node.
-            shortestPathDistances.put(pair.getVertex().getName(), pair.getScore());
+            // Add the node's score to the mstCost tracker, and add the node and its score to the hash map so we know it has been spanned.
+            mstCost += pair.getScore();
+            spannedVertices.put(pair.getVertex().getName(), true);
             
-            // Create HashMap to track which nodes we need to recompute Djikstra greedy score for.
-            Map<Integer, Integer> adjacentVertices = new HashMap<>();
+            // Create HashMap to track which nodes we need to recompute the score for. The Boolean value is arbitrary.
+            Map<Integer, Boolean> adjacentVertices = new HashMap<>();
             
-            // For every node "across the frontier" that is adjacent to the node we just grabbed, recompute its Dijkstra greedy score.
+            // For every node "across the frontier" that is adjacent to the node we just grabbed, recompute its score.
             for (Edge edge : pair.getVertex().getEdges()) {
-                if (!shortestPathDistances.containsKey(edge.getEndpointOne().getName())) {
-                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
-                    adjacentVertices.put(edge.getEndpointOne().getName(), 0);
+                if (!spannedVertices.containsKey(edge.getEndpointOne().getName())) {
+                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its score recomputed.
+                    adjacentVertices.put(edge.getEndpointOne().getName(), true);
                 }
                 
-                if (!shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
-                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its Dijkstra greedy score recomputed.
-                    adjacentVertices.put(edge.getEndpointTwo().getName(), 0);
+                if (!spannedVertices.containsKey(edge.getEndpointTwo().getName())) {
+                    // Add the adjacent node to the adjacentVertices hashmap so we know it needs to have its score recomputed.
+                    adjacentVertices.put(edge.getEndpointTwo().getName(), true);
                 }
             }
             
-            // Recompute the greedy scores for the necessary vertices.
+            // Recompute the scores for the necessary vertices.
             for (int vertexName : adjacentVertices.keySet()) {
                 VertexScorePair adjacentPair = minHeap.getPair(minHeap.getIndex(vertexName));
                 Vertex adjacentVertex = adjacentPair.getVertex();
                 MinHeap localMinHeap = new MinHeap();
                 
                 for (Edge edge : adjacentVertex.getEdges()) {
-                    if (shortestPathDistances.containsKey(edge.getEndpointOne().getName())) { // Need to look at ALL connected vertices in X, not just the one that just got Polled.
-                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength() + shortestPathDistances.get(edge.getEndpointOne().getName())); // Need to add the score of the corresponding vertex in X.
+                    if (spannedVertices.containsKey(edge.getEndpointOne().getName())) { // Need to look at ALL connected vertices in X, not just the one that just got Polled.
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointOne(), edge.getLength());
                         localMinHeap.add(localContestant);
                     }
                     
-                    if (shortestPathDistances.containsKey(edge.getEndpointTwo().getName())) {
-                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength() + shortestPathDistances.get(edge.getEndpointTwo().getName())); // Need to add the score of the corresponding vertex in X.
+                    if (spannedVertices.containsKey(edge.getEndpointTwo().getName())) {
+                        VertexScorePair localContestant = new VertexScorePair(edge.getEndpointTwo(), edge.getLength());
                         localMinHeap.add(localContestant);
                     }
                 }
