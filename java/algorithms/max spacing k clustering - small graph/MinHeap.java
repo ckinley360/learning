@@ -19,7 +19,10 @@ public class MinHeap {
     private EdgeScorePair leftChild(int index) { return items[getLeftChildIndex(index)]; }
     private EdgeScorePair rightChild(int index) { return items[getRightChildIndex(index)]; }
     private EdgeScorePair parent(int index) { return items[getParentIndex(index)]; }
-    public EdgeScorePair getPair(int index) { return items[index]; }
+    
+    public int getSize() {
+        return this.size;
+    }
     
     private void swap(int indexOne, int indexTwo) {
         EdgeScorePair temp = items[indexOne];
