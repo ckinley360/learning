@@ -8,8 +8,26 @@ public class MainProgram {
         // Create the graph from the data file.
         Graph graph = readDataFromFile("smalldata.txt");
         
-        // Print out the graph.
-        System.out.println(graph);
+        // Create the min heap and add the graph's edges to it.
+        MinHeap minHeap = createMinHeapFromGraph(graph);
+        int minHeapSize = minHeap.getSize();
+        
+        // Print out the elements of the min heap.
+        for (int i = 0; i < minHeapSize; i++) {
+            System.out.println(minHeap.poll().getEdge());
+        }
+    }
+    
+    public static MinHeap createMinHeapFromGraph(Graph graph) {
+        MinHeap minHeap = new MinHeap();
+        
+        for (Edge edge : graph.getEdges().values()) {
+            EdgeScorePair pair = new EdgeScorePair(edge, edge.getLength());
+            
+            minHeap.add(pair);
+        }
+        
+        return minHeap;
     }
     
     public static Graph readDataFromFile(String filePath) {
