@@ -6,10 +6,61 @@ import java.util.ArrayList;
 
 public class UnionFind {
     
-    private Map<Integer, Integer> leaders;
-    private Map<Integer, List<Integer>> followers;
+    private Map<Integer, Integer> leaders = new HashMap<>();
+    private Map<Integer, List<Integer>> followers = new HashMap<>();
+    private int groupCount = 0;
     
     public UnionFind(Graph graph) {
-        for (Vertex vertex : graph.getVertices().getV)
+        // Add every vertex to the leaders and followers hashmaps. Initially, every vertex's leader is itself.
+        for (Vertex vertex : graph.getVertices().values()) {
+            leaders.put(vertex.getName(), vertex.getName());
+            
+            List<Integer> followersList = new ArrayList<>();
+            followersList.add(vertex.getName());
+            followers.put(vertex.getName(), followersList);
+            
+            groupCount++;
+        }
+    }
+    
+    // Return the name of the group (leader name) that the vertex with specified name belongs to.
+    public int find(Vertex vertex) {
+        return leaders.get(vertex.getName());
+    }
+    
+    // Fuse the connected components (give them all the same leader) of vertexOne and vertexTwo.
+    public void union(Vertex vertexOne, Vertex vertexTwo) {
+        // Determine which vertex's group is the smallest. We will update the leader of each vertex in the smaller group.
+        int leaderOfGroupOne = leaders.get(vertexOne.getName());
+        int leaderOfGroupTwo = leaders.get(vertexTwo.getName());
+        
+        int sizeOfGroupOne = followers.get(leaderOfGroupOne).size();
+        int sizeOfGroupTwo = followers.get(leaderOfGroupTwo).size();
+        
+        int leaderOfSmallerGroup;
+        int leaderOfLargerGroup;
+        
+        if (sizeOfGroupOne < sizeOfGroupTwo) {
+            leaderOfSmallerGroup = leaderOfGroupOne;
+            leaderOfLargerGroup = leaderOfGroupTwo;
+        } else {
+            leaderOfSmallerGroup = leaderOfGroupTwo;
+            leaderOfLargerGroup = leaderOfGroupOne;
+        }
+        
+        // Update the leader of all vertices in the smaller group.
+        for (int follower : followers.get(leaderOfSmallerGroup)) {
+            leaders.put(follower, leaderOfLargerGroup);
+        }
+        
+        // Remove all followers from the leader of the former smaller group, since it no longer has any followers.
+        followers.remove(leaderOfSmallerGroup);
+        
+        // Decrement group count, since there is now one less group.
+        groupCount--;
+    }
+    
+    public int getGroupCount() {
+        return this.groupCount;
     }
 }
