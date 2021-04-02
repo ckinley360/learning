@@ -54,7 +54,7 @@ public class UnionFind {
         }
         
         // Remove all followers from the leader of the former smaller group, since it no longer has any followers.
-        followers.remove(leaderOfSmallerGroup);
+        followers.get(leaderOfSmallerGroup).clear();
         
         // Decrement group count, since there is now one less group.
         groupCount--;
