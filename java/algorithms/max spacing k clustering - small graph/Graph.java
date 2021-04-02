@@ -62,6 +62,10 @@ public class Graph {
         this.edges.remove(Integer.valueOf(String.valueOf(edge.getEndpointOne().getName()) + String.valueOf(edge.getEndpointTwo().getName())));
     }
     
+    // Return the name of the group (leader name) that the vertex with specified name belongs to.
+    
+    // Fuse the connected components (give them all the same leader) of vertexOne and vertexTwo.
+    
     @Override
     public String toString() {
         StringBuilder output = new StringBuilder();
