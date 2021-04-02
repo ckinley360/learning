@@ -10,12 +10,32 @@ public class MainProgram {
         
         // Create the min heap and add the graph's edges to it.
         MinHeap minHeap = createMinHeapFromGraph(graph);
-        int minHeapSize = minHeap.getSize();
+
+        // Compute the k-clustering with maximum spacing.
+        int maxSpacing = computeMaxSpacingKClustering(graph, minHeap, 4);
         
-        // Print out the elements of the min heap.
-        for (int i = 0; i < minHeapSize; i++) {
-            System.out.println(minHeap.poll().getEdge());
+        // Print out the max spacing.
+        System.out.println("Max spacing: " + maxSpacing);
+    }
+    
+    public static int computeMaxSpacingKClustering(Graph graph, MinHeap minHeap, int clusterCount) {
+        // Create the union-find and add the graph's vertices to it.
+        UnionFind unionFind = new UnionFind(graph);
+        
+        // Combine the closest pair of separated points until there are the desired number of clusters..
+        while (unionFind.getGroupCount() > clusterCount) {
+            Edge minLengthEdge = minHeap.poll().getEdge();
+            Vertex endpointOne = minLengthEdge.getEndpointOne();
+            Vertex endpointTwo = minLengthEdge.getEndpointTwo();
+            
+            // If the endpoints of the shortest edge are in separate groups, then combine them into one group.
+            if (unionFind.find(endpointOne) != unionFind.find(endpointTwo)) {
+                unionFind.union(endpointOne, endpointTwo);
+            }
         }
+        
+        // Now that we've achieved the desired number of clusters, return the shortest distance between two points in separate clusters.
+        return minHeap.poll().getScore();
     }
     
     public static MinHeap createMinHeapFromGraph(Graph graph) {
