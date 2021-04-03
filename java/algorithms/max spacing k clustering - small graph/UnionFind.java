@@ -19,8 +19,16 @@ public class UnionFind {
             followersList.add(vertex.getName());
             followers.put(vertex.getName(), followersList);
             
-            groupCount++;
+            this.groupCount++;
         }
+    }
+    
+    public Map<Integer, Integer> getLeaders() {
+        return this.leaders;
+    }
+    
+    public Map<Integer, List<Integer>> getFollowers() {
+        return this.followers;
     }
     
     // Return the name of the group (leader name) that the vertex with specified name belongs to.
@@ -48,16 +56,17 @@ public class UnionFind {
             leaderOfLargerGroup = leaderOfGroupOne;
         }
         
-        // Update the leader of all vertices in the smaller group.
+        // Update the leader of all vertices in the smaller group, and add the new followers to the leader of the larger group.
         for (int follower : followers.get(leaderOfSmallerGroup)) {
             leaders.put(follower, leaderOfLargerGroup);
+            followers.get(leaderOfLargerGroup).add(follower);
         }
         
         // Remove all followers from the leader of the former smaller group, since it no longer has any followers.
         followers.get(leaderOfSmallerGroup).clear();
         
         // Decrement group count, since there is now one less group.
-        groupCount--;
+        this.groupCount--;
     }
     
     public int getGroupCount() {
