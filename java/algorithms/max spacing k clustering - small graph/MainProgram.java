@@ -6,7 +6,7 @@ public class MainProgram {
     
     public static void main(String[] args) {
         // Create the graph from the data file.
-        Graph graph = readDataFromFile("smalldata.txt");
+        Graph graph = readDataFromFile("smalldatatest.txt");
         
         // Create the min heap and add the graph's edges to it.
         MinHeap minHeap = createMinHeapFromGraph(graph);
@@ -22,7 +22,7 @@ public class MainProgram {
         // Create the union-find and add the graph's vertices to it.
         UnionFind unionFind = new UnionFind(graph);
         
-        // Combine the closest pair of separated points until there are the desired number of clusters..
+        // Combine the closest pair of separated points until there are the desired number of clusters.
         while (unionFind.getGroupCount() > clusterCount) {
             Edge minLengthEdge = minHeap.poll().getEdge();
             Vertex endpointOne = minLengthEdge.getEndpointOne();
@@ -35,7 +35,19 @@ public class MainProgram {
         }
         
         // Now that we've achieved the desired number of clusters, return the shortest distance between two points in separate clusters.
-        return minHeap.poll().getScore();
+        Edge maxSpacingEdge = minHeap.poll().getEdge();
+        Vertex maxSpacingEndpointOne = maxSpacingEdge.getEndpointOne();
+        Vertex maxSpacingEndpointTwo = maxSpacingEdge.getEndpointTwo();
+        
+        while (unionFind.find(maxSpacingEndpointOne) == unionFind.find(maxSpacingEndpointTwo)) {
+            maxSpacingEdge = minHeap.poll().getEdge();
+            maxSpacingEndpointOne = maxSpacingEdge.getEndpointOne();
+            maxSpacingEndpointTwo = maxSpacingEdge.getEndpointTwo();
+        }
+        
+        int maxSpacing = maxSpacingEdge.getLength();
+        
+        return maxSpacing;
     }
     
     public static MinHeap createMinHeapFromGraph(Graph graph) {
@@ -89,7 +101,7 @@ public class MainProgram {
                 // Create the edge with weight represented by the third element of the array, and point it at the vertex and adjacent vertex.
                 int edgeLength = Integer.valueOf(parts[2]);
                 Edge edge = new Edge(graph.getVertex(vertex.getName()), graph.getVertex(adjacentVertex.getName()), edgeLength);
-                    
+                
                 // If the edge already exists in the graph, that means that this specific connection between vertex and adjacent vertex already exists in the graph. Do not add a duplicate.
                 if (!graph.hasEdge(edge)) {
                     // Point the vertex and adjacent vertex at the edge.
