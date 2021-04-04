@@ -6,58 +6,48 @@ public class MainProgram {
     
     public static void main(String[] args) {
         // Create the graph from the data file.
-//        Graph graph = readDataFromFile("smalldatatest.txt");
-        System.out.println(hammingDistance(1, 15));
+        Graph graph = readDataFromFile("bigdata.txt");
         
         // Create the min heap and add the graph's edges to it.
-//        MinHeap minHeap = createMinHeapFromGraph(graph);
+        MinHeap minHeap = createMinHeapFromGraph(graph);
 
-        // Compute the k-clustering with maximum spacing.
-//        int maxSpacing = computeMaxSpacingKClustering(graph, minHeap, 4);
-        
-        // Print out the max spacing.
-//        System.out.println("Max spacing: " + maxSpacing);
+        // Compute the number of clusters after connecting all vertices with hamming distance less than 3.
+        int countOfClusters = computeCountOfClustersAfterConnectingVerticesWithDistanceLessThanThree(graph, minHeap);
+        System.out.println("Count of clusters: " + countOfClusters);
     }
     
-    public static int computeMaxSpacingKClustering(Graph graph, MinHeap minHeap, int clusterCount) {
+    public static int computeCountOfClustersAfterConnectingVerticesWithDistanceLessThanThree(Graph graph, MinHeap minHeap) {
         // Create the union-find and add the graph's vertices to it.
         UnionFind unionFind = new UnionFind(graph);
         
-        // Combine the closest pair of separated points until there are the desired number of clusters.
-        while (unionFind.getGroupCount() > clusterCount) {
-            Edge minLengthEdge = minHeap.poll().getEdge();
-            Vertex endpointOne = minLengthEdge.getEndpointOne();
-            Vertex endpointTwo = minLengthEdge.getEndpointTwo();
+        while (!minHeap.isEmpty()) {
+            Edge edge = minHeap.poll().getEdge();
+            Vertex endpointOne = edge.getEndpointOne();
+            Vertex endpointTwo = edge.getEndpointTwo();
             
-            // If the endpoints of the shortest edge are in separate groups, then combine them into one group.
             if (unionFind.find(endpointOne) != unionFind.find(endpointTwo)) {
                 unionFind.union(endpointOne, endpointTwo);
             }
         }
         
-        // Now that we've achieved the desired number of clusters, return the shortest distance between two points in separate clusters.
-        Edge maxSpacingEdge = minHeap.poll().getEdge();
-        Vertex maxSpacingEndpointOne = maxSpacingEdge.getEndpointOne();
-        Vertex maxSpacingEndpointTwo = maxSpacingEdge.getEndpointTwo();
-        
-        while (unionFind.find(maxSpacingEndpointOne) == unionFind.find(maxSpacingEndpointTwo)) {
-            maxSpacingEdge = minHeap.poll().getEdge();
-            maxSpacingEndpointOne = maxSpacingEdge.getEndpointOne();
-            maxSpacingEndpointTwo = maxSpacingEdge.getEndpointTwo();
-        }
-        
-        int maxSpacing = maxSpacingEdge.getLength();
-        
-        return maxSpacing;
+        return unionFind.getGroupCount();
     }
     
     public static MinHeap createMinHeapFromGraph(Graph graph) {
         MinHeap minHeap = new MinHeap();
         
-        for (Edge edge : graph.getEdges().values()) {
-            EdgeScorePair pair = new EdgeScorePair(edge, edge.getLength());
-            
-            minHeap.add(pair);
+        for (int i = 1; i <= 200000; i++) {
+            for (int j = i + 1; j <= 200000; j++) {
+                Vertex vertexOne = graph.getVertex(i);
+                Vertex vertexTwo = graph.getVertex(j);
+                int hammingDistance = hammingDistance(vertexOne.getBitLabel(), vertexTwo.getBitLabel());
+                
+                if (hammingDistance < 3) {
+                    Edge edge = new Edge(vertexOne, vertexTwo, hammingDistance);
+                    EdgeScorePair pair = new EdgeScorePair(edge, hammingDistance);
+                    minHeap.add(pair);
+                }
+            }
         }
         
         return minHeap;
@@ -67,8 +57,11 @@ public class MainProgram {
         // Create the Graph object to store the data.
         Graph graph = new Graph();
         
-        // Boolean to track whether we are reading the first row, which we want to ignore because it only tells us the total number of vertices.
+        // Boolean to track whether we are reading the first row, which we want to ignore because it only tells us the total number of vertices and number of bits for each node's label.
         Boolean firstRow = true;
+        
+        // The row number of the input file (ignoring the header row) is the vertex's name.
+        int vertexName = 0;
         
         // Create a Scanner object for reading the file.
         try (Scanner scanner = new Scanner(Paths.get(filePath))) {
@@ -84,34 +77,17 @@ public class MainProgram {
                     continue;
                 }
                 
-                // Split the line on the space character.
-                String[] parts = line.split(" ");
+                // Increment the vertex name since we have advanced to the next row.
+                vertexName++;
                 
-                // If the vertex represented by the first element of the array doesn't yet exist in the graph, then create the vertex and add it to the graph.
-                Vertex vertex = new Vertex(Integer.valueOf(parts[0]));
+                // Remove all spaces from the line to create the binary string label of the vertex.
+                String binaryString = line.replaceAll("\\s", "");
+                
+                // If the vertex doesn't yet exist in the graph, then create the vertex and add it to the graph.
+                Vertex vertex = new Vertex(vertexName, binaryString);
                 if (!graph.hasVertex(vertex)) {
                     graph.addVertex(vertex);
                 }
-                
-                // If the vertex represented by the second element of the array doesn't yet exist in the graph, then create the vertex and add it to the graph.
-                Vertex adjacentVertex = new Vertex(Integer.valueOf(parts[1]));
-                if (!graph.hasVertex(adjacentVertex)) {
-                    graph.addVertex(adjacentVertex);
-                }
-                    
-                // Create the edge with weight represented by the third element of the array, and point it at the vertex and adjacent vertex.
-                int edgeLength = Integer.valueOf(parts[2]);
-                Edge edge = new Edge(graph.getVertex(vertex.getName()), graph.getVertex(adjacentVertex.getName()), edgeLength);
-                
-                // If the edge already exists in the graph, that means that this specific connection between vertex and adjacent vertex already exists in the graph. Do not add a duplicate.
-                if (!graph.hasEdge(edge)) {
-                    // Point the vertex and adjacent vertex at the edge.
-                    graph.getVertex(vertex.getName()).addEdge(edge);
-                    graph.getVertex(adjacentVertex.getName()).addEdge(edge);
-                    
-                    // Add the edge to the graph.
-                    graph.addEdge(edge);
-                }      
             }
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
