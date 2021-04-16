@@ -1,15 +1,15 @@
 
 public class NodeScorePair {
 
-    private CharacterNode node;
+    private Node node;
     private int score;
     
-    public NodeScorePair(CharacterNode node, int score) {
+    public NodeScorePair(Node node, int score) {
         this.node = node;
         this.score = score;
     }
     
-    public CharacterNode getNode() {
+    public Node getNode() {
         return this.node;
     }
     
@@ -17,7 +17,7 @@ public class NodeScorePair {
         return this.score;
     }
     
-    public void setNode(CharacterNode node) {
+    public void setNode(Node node) {
         this.node = node;
     }
     
