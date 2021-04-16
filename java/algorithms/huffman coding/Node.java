@@ -6,6 +6,7 @@ public class Node {
     private Node leftChild;
     private Node rightChild;
     private int depth;
+    private boolean isCharacterNode;
     
     public Node(String name, Node parent, Node leftChild, Node rightChild, int depth) {
         this.name = name;
@@ -13,6 +14,13 @@ public class Node {
         this.leftChild = leftChild;
         this.rightChild = rightChild;
         this.depth = depth;
+        
+        // Unnamed nodes are not character nodes.
+        if (name.equals("")) {
+            this.isCharacterNode = false;
+        } else {
+            this.isCharacterNode = true;
+        }
     }
     
     public String getName() {
@@ -53,5 +61,9 @@ public class Node {
     
     public void setDepth(int depth) {
         this.depth = depth;
+    }
+    
+    public boolean isCharacterNode() {
+        return this.isCharacterNode;
     }
 }
