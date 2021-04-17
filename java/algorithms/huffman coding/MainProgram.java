@@ -54,7 +54,7 @@ public class MainProgram {
         for (int i = nodeNames.length - 1; i >= 1; i--) {
             Node leftNode = new Node("", null, null, null, 0); 
             Node rightNode = new Node(nodeNames[i], null, null, null, 0);
-            giveSameParent(leftNode, rightNode, previousParent.getDepth());
+            previousParent = giveSameParent(leftNode, rightNode, previousParent.getDepth());
         }
         
         // Extend the right side of the tree.
