@@ -2,9 +2,9 @@
 public class NodeScorePair {
 
     private Node node;
-    private int score;
+    private long score;
     
-    public NodeScorePair(Node node, int score) {
+    public NodeScorePair(Node node, long score) {
         this.node = node;
         this.score = score;
     }
@@ -13,7 +13,7 @@ public class NodeScorePair {
         return this.node;
     }
     
-    public int getScore() {
+    public long getScore() {
         return this.score;
     }
     
@@ -21,7 +21,7 @@ public class NodeScorePair {
         this.node = node;
     }
     
-    public void setScore(int score) {
+    public void setScore(long score) {
         this.score = score;
     }
 }
