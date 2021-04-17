@@ -22,7 +22,7 @@ public class MainProgram {
         NodeScorePair pairOne = null;
         NodeScorePair pairTwo = null;
 
-        // Build the tree.
+        // Build the tree. //
         while (true) {
             // The base case: two nodes remaining in the tree.
             if (minHeap.getSize() == 2) {
@@ -40,8 +40,38 @@ public class MainProgram {
             minHeap.add(mergedNode);
         }
         
-        System.out.println("Node one: " + pairOne.getNode().getName() + " " + pairOne.getScore());
-        System.out.println("Node two: " + pairTwo.getNode().getName() + " " + pairTwo.getScore());
+        // Extend the tree. //
+        
+        // Do the first extension - give the two remaining nodes the same parent.
+        Node previousParent = giveSameParent(pairOne.getNode(), pairTwo.getNode(), 0);
+        Node rootNode = previousParent;
+        
+        // Extend the left side of the tree.
+        // Extract the node names from the remaining node on the left.
+        String[] nodeNames = pairOne.getNode().getName().split("\\|");
+        
+        // The nodes are currently in ascending order of score, so do a reverse loop on them to store the highest-score nodes at the top of the tree.
+        for (int i = nodeNames.length - 1; i >= 1; i--) {
+            Node leftNode = new Node("", null, null, null, 0); 
+            Node rightNode = new Node(nodeNames[i], null, null, null, 0);
+            giveSameParent(leftNode, rightNode, previousParent.getDepth());
+        }
+        
+        // Extend the right side of the tree.
+    }
+    
+    public static Node giveSameParent(Node nodeOne, Node nodeTwo, int previousParentDepth) {
+        // Create a non-character node, and assign it as the parent of nodeOne and nodeTwo.
+        Node parentNode = new Node("", null, nodeOne, nodeTwo, previousParentDepth + 1);
+        nodeOne.setParent(parentNode);
+        nodeTwo.setParent(parentNode);
+        
+        // Set the depth of nodeOne and nodeTwo, since they have now been moved down 1 level in the tree.
+        nodeOne.setDepth(parentNode.getDepth() + 1);
+        nodeTwo.setDepth(parentNode.getDepth() + 1);
+        
+        // Return the parent node.
+        return parentNode;
     }
     
     public static NodeScorePair mergePairs(NodeScorePair pairOne, NodeScorePair pairTwo) {
