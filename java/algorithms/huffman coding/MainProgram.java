@@ -7,28 +7,54 @@ import java.util.HashMap;
 public class MainProgram {
     
     // Create a hash map to track the original score of each node. This will help us later when we merge nodes.
-    private static Map<String, Integer> nodeScores = new HashMap<>();
+    private static Map<String, Long> nodeScores = new HashMap<>();
     
     public static void main(String[] args) {
         // Create the min heap from the data file.
         MinHeap minHeap = createMinHeapFromFile("data.txt");
         
+        // Create the Huffman tree.
+        createHuffmanTree(minHeap);
     }
     
     public static void createHuffmanTree(MinHeap minHeap) {
+        // These will track the last two remaining nodes in the tree, after building it.
+        NodeScorePair pairOne = null;
+        NodeScorePair pairTwo = null;
+
         // Build the tree.
-        while (!minHeap.isEmpty()) {
+        while (true) {
+            // The base case: two nodes remaining in the tree.
+            if (minHeap.getSize() == 2) {
+                break;
+            }
+
             // Extract the two lowest-score nodes from the min heap.
-            NodeScorePair pairOne = minHeap.poll();
-            NodeScorePair pairTwo = minHeap.poll();
-            Node nodeOne = pairOne.getNode();
-            Node nodeTwo = pairTwo.getNode();
-            int scoreOne = pairOne.getScore();
-            int scoreTwo = pairTwo.getScore();
+            pairOne = minHeap.poll();
+            pairTwo = minHeap.poll();
             
-            // Create a merged node from the two lowest-score nodes. We will use the pipe character to delimit the distinct node names in the merged name.
-            Node mergedNode = new Node(nodeOne.getName() + "|" + nodeTwo.getName(), )
+            // Merge the two lowest-score nodes, using the pipe character to delimit the distinct node names in the merged name.
+            NodeScorePair mergedNode = mergePairs(pairOne, pairTwo);
+            
+            // Insert the merged node into the min heap.
+            minHeap.add(mergedNode);
         }
+        
+        System.out.println("Node one: " + pairOne.getNode().getName() + " " + pairOne.getScore());
+        System.out.println("Node two: " + pairTwo.getNode().getName() + " " + pairTwo.getScore());
+    }
+    
+    public static NodeScorePair mergePairs(NodeScorePair pairOne, NodeScorePair pairTwo) {
+        Node nodeOne = pairOne.getNode();
+        Node nodeTwo = pairTwo.getNode();
+        long scoreOne = pairOne.getScore();
+        long scoreTwo = pairTwo.getScore();
+        
+        Node mergedNode = new Node(nodeOne.getName() + "|" + nodeTwo.getName(), null, null, null, 0);
+        
+        NodeScorePair mergedPair = new NodeScorePair(mergedNode, scoreOne + scoreTwo);
+        
+        return mergedPair;
     }
     
     public static MinHeap createMinHeapFromFile(String filePath) {
@@ -57,7 +83,7 @@ public class MainProgram {
                 
                 // Create the NodeScorePair object corresponding to the current row and add it to the min heap.
                 Node node = new Node(String.valueOf(rowNumber), null, null, null, 0);
-                int score = Integer.valueOf(line);
+                long score = Long.valueOf(line);
                 NodeScorePair pair = new NodeScorePair(node, score);
                 minHeap.add(pair);
                 
