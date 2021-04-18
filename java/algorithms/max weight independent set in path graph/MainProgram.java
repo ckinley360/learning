@@ -1,6 +1,7 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class MainProgram {
     
@@ -11,9 +12,31 @@ public class MainProgram {
         // Compute the values of the max weight independent set.
         int[] values = computeMaxWeightIndependentSetValues(data);
         
-        for (int value : values) {
-            System.out.println(value);
+        // Compute the nodes of the max weight independent set.
+        ArrayList<Integer> nodes = computeMaxWeightIndependentSetNodes(data, values);
+        
+        for (int node : nodes) {
+            System.out.println(node);
         }
+    }
+    
+    public static ArrayList<Integer> computeMaxWeightIndependentSetNodes(int[] data, int[] values) {
+        // Create the arraylist to store the nodes that are in the max weight independent set.
+        ArrayList<Integer> nodes = new ArrayList<>();
+        
+        for (int i = values.length - 1; i >= 1; i--) {
+            int lastExcluded = values[i - 1];
+            int secondToLastExcluded = values[i - 2] + data[i - 1];
+            
+            if (lastExcluded >= secondToLastExcluded) {
+                continue;
+            } else {
+                nodes.add(data[i - 1]);
+                i--;
+            }
+        }
+        
+        return nodes;
     }
     
     public static int[] computeMaxWeightIndependentSetValues(int[] data) {
