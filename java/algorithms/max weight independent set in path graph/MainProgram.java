@@ -13,6 +13,20 @@ public class MainProgram {
         }
     }
     
+    public static int[] computeMaxWeightIndependentSetValues(int[] data) {
+        // Create the array to store the max weight independent set values in.
+        int[] values = new int[1001];
+        
+        // Insert the initial values for the empty set and single node set.
+        values[0] = 0;
+        values[1] = data[0];
+        
+        // Compute the remaining values.
+        for (int i = 1; i < 999; i++) {
+            
+        }
+    }
+    
     public static int[] createArrayFromFile(String filePath) {
         // Create the array to store the data in.
         int[] data = new int[1000];
