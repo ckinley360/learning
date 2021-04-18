@@ -3,15 +3,16 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class MainProgram {
     
-    // Create a hash map to track the original score of each node. This will help us later when we merge nodes.
-    private static Map<String, Long> nodeScores = new HashMap<>();
+    // Create a hash map to track how many times each node is involved in a merge.
+    private static Map<String, Integer> nodeMergeCount = new HashMap<>();
     
     public static void main(String[] args) {
         // Create the min heap from the data file.
-        MinHeap minHeap = createMinHeapFromFile("data.txt");
+        MinHeap minHeap = createMinHeapFromFile("testdata.txt");
         
         // Create the Huffman tree.
         createHuffmanTree(minHeap);
@@ -40,44 +41,22 @@ public class MainProgram {
             minHeap.add(mergedNode);
         }
         
-        // Extend the tree. //
+        // Output the max and min depth of all nodes. Add 1 to the max and min because the base case (2 nodes remaining in the tree) does not trigger a merge, so 1 depth shift is not accounted for.
+        int[] nodeDepths = new int[1000];
+        int i = 0;
         
-        // Do the first extension - give the two remaining nodes the same parent.
-        Node previousParent = giveSameParent(pairOne.getNode(), pairTwo.getNode(), 0);
-        Node rootNode = previousParent;
-        
-        // Extend the left side of the tree.
-        // Extract the node names from the remaining node on the left.
-        String[] nodeNames = pairOne.getNode().getName().split("\\|");
-        
-        // The nodes are currently in ascending order of score, so do a reverse loop on them to store the highest-score nodes at the top of the tree.
-        for (int i = nodeNames.length - 1; i >= 1; i--) {
-            Node leftNode = new Node("", null, null, null, 0); 
-            Node rightNode = new Node(nodeNames[i], null, null, null, 0);
-            Node currentParent = giveSameParent(leftNode, rightNode, previousParent.getDepth());
-            previousParent.setLeftChild(currentParent);
-            currentParent.setParent(previousParent);
-            previousParent = currentParent;
+        for (int depth : nodeMergeCount.values()) {
+            nodeDepths[i] = depth;
+            i++;
         }
         
-        // Extend the right side of the tree.
-    }
-    
-    public static Node giveSameParent(Node nodeOne, Node nodeTwo, int previousParentDepth) {
-        // Create a non-character node, and assign it as the parent of nodeOne and nodeTwo.
-        Node parentNode = new Node("", null, nodeOne, nodeTwo, previousParentDepth + 1);
-        nodeOne.setParent(parentNode);
-        nodeTwo.setParent(parentNode);
-        
-        // Set the depth of nodeOne and nodeTwo, since they have now been moved down 1 level in the tree.
-        nodeOne.setDepth(parentNode.getDepth() + 1);
-        nodeTwo.setDepth(parentNode.getDepth() + 1);
-        
-        // Return the parent node.
-        return parentNode;
+        Arrays.sort(nodeDepths);
+        System.out.println("Max depth: " + (nodeDepths[999] + 1));
+        System.out.println("Min depth: " + (nodeDepths[0] + 1));
     }
     
     public static NodeScorePair mergePairs(NodeScorePair pairOne, NodeScorePair pairTwo) {
+        // Do the merge.
         Node nodeOne = pairOne.getNode();
         Node nodeTwo = pairTwo.getNode();
         long scoreOne = pairOne.getScore();
@@ -86,6 +65,18 @@ public class MainProgram {
         Node mergedNode = new Node(nodeOne.getName() + "|" + nodeTwo.getName(), null, null, null, 0);
         
         NodeScorePair mergedPair = new NodeScorePair(mergedNode, scoreOne + scoreTwo);
+        
+        // Increment the depth of each node involved in the merge.
+        String[] nodeOneNames = nodeOne.getName().split("\\|");
+        String[] nodeTwoNames = nodeTwo.getName().split("\\|");
+        
+        for (String nodeName : nodeOneNames) {
+            nodeMergeCount.put(nodeName, nodeMergeCount.get(nodeName) + 1);
+        }
+        
+        for (String nodeName : nodeTwoNames) {
+            nodeMergeCount.put(nodeName, nodeMergeCount.get(nodeName) + 1);
+        }
         
         return mergedPair;
     }
@@ -120,8 +111,8 @@ public class MainProgram {
                 NodeScorePair pair = new NodeScorePair(node, score);
                 minHeap.add(pair);
                 
-                // Record the node's score in the hash map.
-                nodeScores.put(node.getName(), score);
+                // Record the count of merges the node has been involved in thus far (all will initially be 0).
+                nodeMergeCount.put(node.getName(), 0);
                 
                 // Increment the row counter.
                 rowNumber++;
