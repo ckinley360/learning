@@ -12,7 +12,7 @@ public class MainProgram {
     
     public static void main(String[] args) {
         // Create the min heap from the data file.
-        MinHeap minHeap = createMinHeapFromFile("testdata.txt");
+        MinHeap minHeap = createMinHeapFromFile("data.txt");
         
         // Create the Huffman tree.
         createHuffmanTree(minHeap);
