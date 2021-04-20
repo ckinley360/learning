@@ -11,9 +11,15 @@ public class MainProgram {
         
         // The weight capacity of the knapsack.
         int knapsackCapacity = 10000;
+        
+        // Compute the value of the optimal knapsack solution.
+        int optimalSolutionValue = computeOptimalKnapsackSolutionValue(items, knapsackCapacity);
+        
+        // Output the value of the optimal knapsack solution.
+        System.out.println("Value of optimal knapsack solution: " + optimalSolutionValue);
     }
     
-    public static int computeOptimalKnapsackSolution(Item[] items, int knapsackCapacity) {
+    public static int computeOptimalKnapsackSolutionValue(Item[] items, int knapsackCapacity) {
         // Create an array to store the value of the optimal solution for all subproblems.
         int[][] optimalSolutionValues = new int[items.length + 1][knapsackCapacity + 1];
         
