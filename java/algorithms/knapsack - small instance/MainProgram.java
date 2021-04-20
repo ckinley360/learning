@@ -1,6 +1,7 @@
 
 import java.nio.file.Paths;
 import java.util.Scanner;
+import java.lang.Math;
 
 public class MainProgram {
 
@@ -26,10 +27,16 @@ public class MainProgram {
             for (int x = 0; x <= knapsackCapacity + 1; x++) {
                 int maxValue = 0;
                 
-                if ()
-//                optimalSolutionValues[i, x] = 
+                if (items[i - 1].getWeight() > x) { // Edge case. Ignore Case 2.
+                    maxValue = optimalSolutionValues[i - 1][x];
+                } else { // Find the max of Case 1, Case2.
+                    maxValue = Math.max(optimalSolutionValues[i - 1][x], optimalSolutionValues[i - 1][x - items[i - 1].getWeight()] + items[i - 1].getValue());
+                }
+                optimalSolutionValues[i][x] = maxValue; 
             }
         }
+        
+        return optimalSolutionValues[items.length][knapsackCapacity];
     }
     
     public static Item[] createArrayFromFile(String filePath) {
