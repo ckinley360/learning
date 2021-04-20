@@ -24,13 +24,13 @@ public class MainProgram {
         int[][] optimalSolutionValues = new int[items.length + 1][knapsackCapacity + 1];
         
         // Initialize the array for item count of 0.
-        for (int x = 0; x <= knapsackCapacity + 1; x++) {
+        for (int x = 0; x <= knapsackCapacity; x++) {
             optimalSolutionValues[0][x] = 0;
         }
         
         // Compute the rest of the values.
-        for (int i = 1; i <= items.length + 1; i++) {
-            for (int x = 0; x <= knapsackCapacity + 1; x++) {
+        for (int i = 1; i <= items.length; i++) {
+            for (int x = 0; x <= knapsackCapacity; x++) {
                 int maxValue = 0;
                 
                 if (items[i - 1].getWeight() > x) { // Edge case. Ignore Case 2.
