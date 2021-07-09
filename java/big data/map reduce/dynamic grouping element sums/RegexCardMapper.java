@@ -1,4 +1,3 @@
-
 package stubs;
 
 import java.io.IOException;
@@ -11,6 +10,10 @@ import java.util.regex.Pattern;
 
 public class RegexCardMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 	
+	/**
+	 * Example line:<br>
+	 * 2015-01-10 00:00:07	16e57c25-4f82-46e5-bf26-8fa0796d8588	Blackjack	Diamond	8
+	 */
 	private static Pattern inputPattern = Pattern.compile("(.*)\\t(.*)\\t(.*)\\t(Spade|Club|Heart|Diamond)\\t(2|3|4|5|6|7|8|9|10)$");
 	private static int groupingElementGroupNumber; // Stores the regex group number of the desired grouping element.
 	
