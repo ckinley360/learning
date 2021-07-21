@@ -28,22 +28,28 @@ public class AvroDriver extends Configured implements Tool {
 		}
 		
 		/* Job 1: The ETL job (Map-only) */
+		// Create Job
 		Job etlJob = Job.getInstance();
 		etlJob.setJarByClass(AvroDriver.class);
 		etlJob.setJobName("Card ETL");
 		
+		// Set File Input and Output Paths
 		FileInputFormat.setInputPaths(etlJob, new Path(input));
 		FileOutputFormat.setOutputPath(etlJob, new Path(output + "-etl"));
 		
+		// Set Input and Output Format for Data
 		etlJob.setInputFormatClass(TextInputFormat.class);
 		etlJob.setOutputFormatClass(AvroKeyValueOutputFormat.class);
 		
+		// Set Mapper Class and Specify that There is No Reducer
 		etlJob.setMapperClass(RegexCardMapper.class);
 		etlJob.setNumReduceTasks(0);
 		
+		// Set Avro Output Key and Value Schemas
 		AvroJob.setOutputKeySchema(etlJob, Card.getClassSchema());
 		AvroJob.setOutputValueSchema(etlJob, Schema.create(Schema.Type.NULL));
 		
+		// Submit the job and wait for completion.
 		boolean success = etlJob.waitForCompletion(true);
 		
 		if (success == false) {
@@ -52,31 +58,43 @@ public class AvroDriver extends Configured implements Tool {
 		}
 		
 		/* Job 2: The Map & Reduce */
+		// Create Job
 		Job countJob = Job.getInstance();
 		countJob.setJarByClass(AvroDriver.class);
 		countJob.setJobName("Card Counter");
 		
+		// Set File Input and Output Paths
 		FileInputFormat.setInputPaths(countJob, new Path(output + "-etl"));
 		FileOutputFormat.setOutputPath(countJob, new Path(output));
 		
+		// Set Input and Output Format for Data
 		countJob.setInputFormatClass(AvroKeyValueInputFormat.class);
 		countJob.setOutputFormatClass(AvroKeyValueOutputFormat.class);
 		
+		// Set Mapper and Reducer Classes
 		countJob.setMapperClass(CardMapper.class);
 		countJob.setReducerClass(CardTotalReducer.class);
 		
+		// Set the Custom Partitioner Class
+		countJob.setPartitionerClass(CustomPartitioner.class);
+		
+		// Set Mapper Output Key and Value Classes
 		countJob.setMapOutputKeyClass(Suit.class);
 		countJob.setMapOutputValueClass(Card.class);
 		
+		// Set Avro Input Key and Value Schemas
 		AvroJob.setInputKeySchema(countJob, Card.getClassSchema());
 		AvroJob.setInputValueSchema(countJob, Schema.create(Schema.Type.NULL));
 		
+		// Set Avro Map Output Key and Value Schemas
 		AvroJob.setMapOutputKeySchema(countJob, Suit.getClassSchema());
 		AvroJob.setMapOutputValueSchema(countJob, Card.getClassSchema());
 		
+		// Set Avro Output Key and Value Schemas
 		AvroJob.setOutputKeySchema(countJob, Suit.getClassSchema());
 		AvroJob.setOutputValueSchema(countJob, Schema.create(Schema.Type.INT));
 		
+		// Submit the job and wait for completion.
 		success = countJob.waitForCompletion(true);
 		
 		return success ? 0 : 1;
