@@ -71,8 +71,9 @@ public class AvroDriver extends Configured implements Tool {
 		countJob.setInputFormatClass(AvroKeyValueInputFormat.class);
 		countJob.setOutputFormatClass(AvroKeyValueOutputFormat.class);
 		
-		// Set Mapper and Reducer Classes
+		// Set Mapper, Combiner, and Reducer Classes
 		countJob.setMapperClass(CardMapper.class);
+		countJob.setCombinerClass(CardTotalReducer.class);
 		countJob.setReducerClass(CardTotalReducer.class);
 		
 		// Set the Custom Partitioner Class
@@ -84,7 +85,7 @@ public class AvroDriver extends Configured implements Tool {
 		
 		// Set Avro Map Output Key and Value Schemas
 		AvroJob.setMapOutputKeySchema(countJob, Suit.getClassSchema());
-		AvroJob.setMapOutputValueSchema(countJob, Card.getClassSchema());
+		AvroJob.setMapOutputValueSchema(countJob, Schema.create(Schema.Type.INT));
 		
 		// Set Avro Output Key and Value Schemas
 		AvroJob.setOutputKeySchema(countJob, Suit.getClassSchema());
