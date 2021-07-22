@@ -7,11 +7,11 @@ import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class CardMapper extends Mapper<AvroKey<Card>, AvroValue<NullWritable>, AvroKey<Suit>, AvroValue<Card>> {
+public class CardMapper extends Mapper<AvroKey<Card>, AvroValue<NullWritable>, AvroKey<Suit>, AvroValue<Integer>> {
 
 	@Override
 	public void map(AvroKey<Card> key, AvroValue<NullWritable> value, Context context) throws IOException, InterruptedException {
 		// Emit and group by suit.
-		context.write(new AvroKey<Suit>(key.datum().getSuit()), new AvroValue<Card>(key.datum()));
+		context.write(new AvroKey<Suit>(key.datum().getSuit()), new AvroValue<Integer>(1));
 	}
 }
