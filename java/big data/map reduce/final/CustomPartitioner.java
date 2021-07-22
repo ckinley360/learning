@@ -2,7 +2,6 @@ package stubs;
 
 import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapred.AvroValue;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
 
 public class CustomPartitioner extends Partitioner<AvroKey<Suit>, AvroValue<Card>> {
