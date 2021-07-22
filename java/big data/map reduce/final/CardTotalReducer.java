@@ -6,18 +6,18 @@ import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class CardTotalReducer extends Reducer<AvroKey<Suit>, AvroValue<Card>, AvroKey<Suit>, AvroValue<Integer>> {
+public class CardTotalReducer extends Reducer<AvroKey<Suit>, AvroValue<Integer>, AvroKey<Suit>, AvroValue<Integer>> {
 	
 	@Override
-	public void reduce(AvroKey<Suit> key, Iterable<AvroValue<Card>> values, Context context) throws IOException, InterruptedException {
-		int sum = 0;
+	public void reduce(AvroKey<Suit> key, Iterable<AvroValue<Integer>> values, Context context) throws IOException, InterruptedException {
+		int count = 0;
 		
-		// Go through all the values to sum up card values for a card suit.
-		for (AvroValue<Card> value : values) {
-			sum += Integer.parseInt(value.datum().getCard().toString());
+		// Go through all the values to count the number of cards for each suit.
+		for (AvroValue<Integer> value : values) {
+			count += value.datum();
 		}
 		
 		// Emit the count grouped by suit.
-		context.write(key, new AvroValue<Integer>(sum));
+		context.write(key, new AvroValue<Integer>(count));
 	}
 }
