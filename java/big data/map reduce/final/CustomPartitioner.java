@@ -4,10 +4,10 @@ import org.apache.avro.mapred.AvroKey;
 import org.apache.avro.mapred.AvroValue;
 import org.apache.hadoop.mapreduce.Partitioner;
 
-public class CustomPartitioner extends Partitioner<AvroKey<Suit>, AvroValue<Card>> {
+public class CustomPartitioner extends Partitioner<AvroKey<Suit>, AvroValue<Integer>> {
 
 	@Override
-	public int getPartition(AvroKey<Suit> key, AvroValue<Card> value, int numPartitions) {
+	public int getPartition(AvroKey<Suit> key, AvroValue<Integer> value, int numPartitions) {
 		String suit = key.datum().toString().toLowerCase();
 		
 		// Each suit is evenly distributed, so try to evenly distribute each suit to its own partition.
