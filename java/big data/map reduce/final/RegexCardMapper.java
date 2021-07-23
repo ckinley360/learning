@@ -45,7 +45,8 @@ public class RegexCardMapper extends Mapper<LongWritable, Text, AvroKey<Card>, A
 			card.setSuit(suit);
 			card.setCard(cardNumber);
 			
-			context.write(new AvroKey<Card>(card), new AvroValue<NullWritable>(NullWritable.get()));
+			context.write(new AvroKey<Card>(card), new AvroValue<NullWritable>(NullWritable.get())); // Emit the data to the file system.
+			context.getCounter("suits", inputMatch.group(4).toLowerCase()).increment(1); // Increment the counter for this suit.
 		} else {
 			logger.info("Non-matching data: " + inputLine);
 		}
