@@ -52,6 +52,16 @@ public class AvroDriver extends Configured implements Tool {
 		// Submit the job and wait for completion.
 		boolean success = etlJob.waitForCompletion(true);
 		
+		// Print out the count of each suit by using the "suits" counter.
+		long numberOfSpades = etlJob.getCounters().getGroup("suits").findCounter("spade").getValue();
+		long numberOfClubs = etlJob.getCounters().getGroup("suits").findCounter("club").getValue();
+		long numberOfHearts = etlJob.getCounters().getGroup("suits").findCounter("heart").getValue();
+		long numberOfDiamonds = etlJob.getCounters().getGroup("suits").findCounter("diamond").getValue();
+		System.out.println("Spades: " + numberOfSpades);
+		System.out.println("Clubs: " + numberOfClubs);
+		System.out.println("Hearts: " + numberOfHearts);
+		System.out.println("Diamonds: " + numberOfDiamonds);
+		
 		if (success == false) {
 			System.err.println("First phase failed");
 			return 1;
