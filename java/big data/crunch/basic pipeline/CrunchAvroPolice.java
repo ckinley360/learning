@@ -1,10 +1,14 @@
 package stubs;
 
+import model.PoliceCall;
+
 import org.apache.crunch.PCollection;
 import org.apache.crunch.Pipeline;
+import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
+import org.apache.crunch.io.From;
 import org.apache.crunch.io.To;
-import org.apache.crunch.types.writable.Writables;
+import org.apache.crunch.types.avro.Avros;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
@@ -17,14 +21,28 @@ public class CrunchAvroPolice extends Configured implements Tool {
 	}
 	
 	public int run(String[] args) throws Exception {
+		// Parse the args
+		String input, output;
+		
+		if (args.length == 2) {
+			input = args[0];
+			output = args[1];
+		} else {
+			System.err.println("Expected: input output");
+			return -1;
+		}
+		
 		// Create a pipeline
 		Pipeline pipeline = new MRPipeline(CrunchAvroPolice.class, getConf());
 		
 		// Read the data from the text file 
-		PCollection<String> lines = pipeline.readTextFile(args[0]);
+		PCollection<String> lines = pipeline.read(From.textFile(input));
+		
+		PCollection<PoliceCall> policeCalls = lines.parallelDo(new PoliceParsingDoFN(), Avros.specifics(PoliceCall.class));
 		
 		// Write the data to an Avro file
-		lines.write(To.avroFile(args[1]));
+		//policeCalls.write(To.avroFile(output));
+		policeCalls.write(To.avroFile(output));
 		
 		// Submit the job for execution
 		PipelineResult result = pipeline.done();
