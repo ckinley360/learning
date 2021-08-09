@@ -41,7 +41,6 @@ public class CrunchAvroPolice extends Configured implements Tool {
 		PCollection<PoliceCall> policeCalls = lines.parallelDo(new PoliceParsingDoFN(), Avros.specifics(PoliceCall.class));
 		
 		// Write the data to an Avro file
-		//policeCalls.write(To.avroFile(output));
 		policeCalls.write(To.avroFile(output));
 		
 		// Submit the job for execution
