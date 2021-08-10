@@ -12,7 +12,6 @@ public class PoliceParsingDoFN extends DoFn<String, PoliceCall> {
 
 	private static final long serialVersionUID = -5128505824415122639L;
 	private static Pattern inputPattern = Pattern.compile("([E0-9]+),([A-Z0-9]*),([A-Z]*),([A-Z0-9]*),\\s(\\d{2}\\/\\d{2}\\/\\d{4}),(\\d+),(\\d+),(\\d+),(\\d+),(.*)");
-	private static final PoliceCall.Builder policeCallBuilder = PoliceCall.newBuilder();
 	
 	@Override
 	public void process(String line, Emitter<PoliceCall> emitter) {
@@ -30,7 +29,7 @@ public class PoliceParsingDoFN extends DoFn<String, PoliceCall> {
 			Long clearTime = Long.parseLong(inputMatch.group(9));
 			String disposition = inputMatch.group(10);
 			
-			PoliceCall policeCall = policeCallBuilder.build();
+			PoliceCall policeCall = new PoliceCall();
 			policeCall.setPriority(convertedPriority);
 			policeCall.setCallType(callType);
 			policeCall.setJurisdiction(jurisdiction);
