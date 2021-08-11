@@ -3,15 +3,28 @@ package stubs;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import model.PoliceCall;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.crunch.DoFn;
 import org.apache.crunch.Emitter;
-
-import model.PoliceCall;
 
 public class PoliceParsingDoFN extends DoFn<String, PoliceCall> {
 
 	private static final long serialVersionUID = -5128505824415122639L;
-	private static Pattern inputPattern = Pattern.compile("([E0-9]+),([A-Z0-9]*),([A-Z]*),([A-Z0-9]*),\\s(\\d{2}\\/\\d{2}\\/\\d{4}),(\\d+),(\\d+),(\\d+),(\\d+),(.*)");
+	/*** 
+	 * Example data:
+	 * Priority,Call_Type,Jurisdiction,Dispatch_Area,Received_Date,Received_Time,Dispatch_Time,Arrival_Time,Cleared_Time,Disposition
+	 * 3,SUSPV,RP,RS, 03/21/2013,173011,182946,182946,183107,OK
+	 */
+	private static Pattern inputPattern;
+	private static final Log LOG = LogFactory.getLog(PoliceParsingDoFN.class);
+	
+	@Override
+	public void initialize() {
+		inputPattern = Pattern.compile("([E0-9]+),([A-Z0-9]*),([A-Z]*),([A-Z0-9]*),\\s(\\d{2}\\/\\d{2}\\/\\d{4}),(\\d+),(\\d+),(\\d+),(\\d+),(.*)");
+	}
 	
 	@Override
 	public void process(String line, Emitter<PoliceCall> emitter) {
@@ -41,6 +54,8 @@ public class PoliceParsingDoFN extends DoFn<String, PoliceCall> {
 			policeCall.setDisposition(disposition);
 			
 			emitter.emit(policeCall);
+		} else {
+			LOG.warn("Could not parse. Input was \"" + line + "\".");
 		}
 	}
 }
