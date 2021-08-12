@@ -3,13 +3,17 @@ package stubs;
 import org.apache.crunch.PCollection;
 import org.apache.crunch.PTable;
 import org.apache.crunch.Pipeline;
+import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
-import org.apache.crunch.types.writable.Writables;
+import org.apache.crunch.io.To;
+import org.apache.crunch.types.avro.Avros;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+
+import model.PoliceCall;
 
 public class AdvancedCrunchPolice extends Configured implements Tool {
 
@@ -30,15 +34,25 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 			return -1;
 		}
 		
-		// Create a pipeline for the call cost data
+		// Create the pipelines for the call cost data and the call data
 		Pipeline callCostPipeline = new MRPipeline(AdvancedCrunchPolice.class, getConf());
+		Pipeline callPipeline = new MRPipeline(AdvancedCrunchPolice.class, getConf());
 		
-		// Read in the call cost data from the text file
+		// Read in the data from the source files
 		PCollection<String> callCostLines = callCostPipeline.read(From.textFile(callCostInput));
+		PCollection<PoliceCall> callLines = callPipeline.read(From.avroFile(callInput, Avros.records(PoliceCall.class)));
 		
-		// Parse the call cost data and store in a PTable
+		// Parse the data and store in PTables
 		PTable<Integer, Double> callCost = callCostLines.parallelDo(
 				new PoliceCostParseDoFN(),
-				Writables.tableOf(Writables.ints(), Writables.doubles()));
+				Avros.tableOf(Avros.ints(), Avros.doubles()));
+		PTable<Integer, PoliceCall> calls = callLines.parallelDo(
+				new PolicePriorityParseDoFN(),
+				Avros.tableOf(Avros.ints(), Avros.specifics(PoliceCall.class)));
+		
+		// Submit the job for execution
+		PipelineResult result = callCostPipeline.done();
+		
+		return result.succeeded() ? 0 : 1;
 	}
 }
