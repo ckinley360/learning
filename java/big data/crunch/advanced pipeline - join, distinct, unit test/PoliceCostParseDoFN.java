@@ -11,6 +11,7 @@ import org.apache.crunch.Pair;
 
 public class PoliceCostParseDoFN extends DoFn<String, Pair<Integer, Double>> {
 
+	private static final long serialVersionUID = 2136113286681640460L;
 	/***
 	 * Example data:
 	 * Priority,Cost
