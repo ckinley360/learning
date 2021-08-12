@@ -2,11 +2,14 @@ package stubs;
 
 import org.apache.crunch.PCollection;
 import org.apache.crunch.PTable;
+import org.apache.crunch.Pair;
 import org.apache.crunch.Pipeline;
 import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
 import org.apache.crunch.io.To;
+import org.apache.crunch.lib.join.JoinType;
+import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -49,6 +52,12 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 		PTable<Integer, PoliceCall> calls = callLines.parallelDo(
 				new PolicePriorityParseDoFN(),
 				Avros.tableOf(Avros.ints(), Avros.specifics(PoliceCall.class)));
+		
+		// Create the MapSideJoinStrategy
+		MapsideJoinStrategy<Integer, Double, PoliceCall> mapSideStrategy = MapsideJoinStrategy.create();
+		
+		// Join the tables.
+		PTable<Integer, Pair<Double, PoliceCall>> mapJoined = mapSideStrategy.join(callCost, calls, JoinType.INNER_JOIN);
 		
 		// Submit the job for execution
 		PipelineResult result = callCostPipeline.done();
