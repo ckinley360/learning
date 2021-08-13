@@ -8,9 +8,12 @@ import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
 import org.apache.crunch.io.To;
+import org.apache.crunch.lib.Channels;
+import org.apache.crunch.lib.Distinct;
 import org.apache.crunch.lib.join.JoinType;
 import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
+import org.apache.crunch.types.writable.Writables;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
@@ -45,7 +48,7 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 		PCollection<String> callCostLines = callCostPipeline.read(From.textFile(callCostInput));
 		PCollection<PoliceCall> callLines = callPipeline.read(From.avroFile(callInput, Avros.records(PoliceCall.class)));
 		
-		// Parse the data and store in PTables
+		// Parse the call cost and call data, then store in PTables
 		PTable<Integer, Double> callCost = callCostLines.parallelDo(
 				new PoliceCostParseDoFN(),
 				Avros.tableOf(Avros.ints(), Avros.doubles()));
@@ -53,11 +56,27 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 				new PolicePriorityParseDoFN(),
 				Avros.tableOf(Avros.ints(), Avros.specifics(PoliceCall.class)));
 		
+		// ***JOIN***
 		// Create the MapSideJoinStrategy
 		MapsideJoinStrategy<Integer, Double, PoliceCall> mapSideStrategy = MapsideJoinStrategy.create();
 		
 		// Join the tables.
 		PTable<Integer, Pair<Double, PoliceCall>> mapJoined = mapSideStrategy.join(callCost, calls, JoinType.INNER_JOIN);
+		
+		// ***DISTINCT***
+		// Parse the jurisdictions and dispatch areas
+		PCollection<Pair<String, String>> jurisdictionsAndDispatchAreas = callLines.parallelDo(
+				new PoliceJurisdictionAndDispatchAreaParseDoFN(), 
+				Writables.pairs(Writables.strings(), Writables.strings()));
+		
+		// Split the jurisdictions and dispatch areas into their own PCollections
+		Pair<PCollection<String>, PCollection<String>> split = Channels.split(jurisdictionsAndDispatchAreas);
+		PCollection<String> jurisdictions = split.first();
+		PCollection<String> dispatchAreas = split.second();
+		
+		// Get the distinct jurisdictions and dispatch areas
+		PCollection<String> distinctJurisdictions = Distinct.distinct(jurisdictions);
+		PCollection<String> distinctDispatchAreas = Distinct.distinct(dispatchAreas);
 		
 		// Submit the job for execution
 		PipelineResult result = callCostPipeline.done();
