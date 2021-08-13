@@ -7,6 +7,8 @@ import org.apache.crunch.impl.mem.emit.InMemoryEmitter;
 import org.apache.curator.shaded.com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
+import model.PoliceCall;
+
 public class DoFNUnitTest {
 
 	@Test
@@ -14,5 +16,14 @@ public class DoFNUnitTest {
 		InMemoryEmitter<Pair<Integer, Double>> emitter = new InMemoryEmitter<Pair<Integer, Double>>();
 		new PoliceCostParseDoFN().process("5,11.24", emitter);
 		assertEquals(ImmutableList.of(new Pair<Integer, Double>(5, 11.24)), emitter.getOutput());
+	}
+	
+	@Test
+	public void testPolicePriorityParseDoFn() {
+		InMemoryEmitter<Pair<Integer, PoliceCall>> emitter = new InMemoryEmitter<Pair<Integer, PoliceCall>>();
+		PoliceCall testCall = new PoliceCall(3, "SUSPV", "RP", "RS", 173011L, 182946L, 182950L, 183107L, "OK");
+		PoliceCall testCall2 = new PoliceCall(3, "SUSPV", "RP", "RS", 173011L, 182946L, 182950L, 183107L, "BAD");
+		new PolicePriorityParseDoFN().process(testCall, emitter);
+		assertEquals(ImmutableList.of(new Pair<Integer, PoliceCall>(3, testCall)), emitter.getOutput());
 	}
 }
