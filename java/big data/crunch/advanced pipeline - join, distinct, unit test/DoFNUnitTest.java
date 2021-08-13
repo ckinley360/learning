@@ -26,4 +26,12 @@ public class DoFNUnitTest {
 		new PolicePriorityParseDoFN().process(testCall, emitter);
 		assertEquals(ImmutableList.of(new Pair<Integer, PoliceCall>(3, testCall)), emitter.getOutput());
 	}
+	
+	@Test
+	public void testPoliceJurisdictionAndDispatchAreaParseDoFn() {
+		InMemoryEmitter<Pair<String, String>> emitter = new InMemoryEmitter<Pair<String, String>>();
+		PoliceCall testCall = new PoliceCall(3, "SUSPV", "RP", "RS", 173011L, 182946L, 182950L, 183107L, "OK");
+		new PoliceJurisdictionAndDispatchAreaParseDoFN().process(testCall, emitter);
+		assertEquals(ImmutableList.of(new Pair<String, String>("RP", "RS")), emitter.getOutput());
+	}
 }
