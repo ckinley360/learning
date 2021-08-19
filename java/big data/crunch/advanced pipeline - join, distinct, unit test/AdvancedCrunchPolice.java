@@ -6,6 +6,7 @@ import org.apache.crunch.PTable;
 import org.apache.crunch.Pair;
 import org.apache.crunch.Pipeline;
 import org.apache.crunch.PipelineResult;
+import org.apache.crunch.fn.IdentityFn;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
 import org.apache.crunch.io.To;
@@ -41,13 +42,12 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 			return -1;
 		}
 		
-		// Create the pipelines for the call cost data and the call data
-		Pipeline callCostPipeline = new MRPipeline(AdvancedCrunchPolice.class, getConf());
-		Pipeline callPipeline = new MRPipeline(AdvancedCrunchPolice.class, getConf());
+		// Create the pipeline
+		Pipeline pipeline = new MRPipeline(AdvancedCrunchPolice.class, getConf());
 		
 		// Read in the data from the source files
-		PCollection<String> callCostLines = callCostPipeline.read(From.textFile(callCostInput));
-		PCollection<PoliceCall> callLines = callPipeline.read(From.avroFile(callInput, PoliceCall.class));
+		PCollection<String> callCostLines = pipeline.read(From.textFile(callCostInput));
+		PCollection<PoliceCall> callLines = pipeline.read(From.avroFile(callInput, PoliceCall.class));
 		
 		// Parse the call cost and call data, then store in PTables
 		// <Priority, Cost>
@@ -69,40 +69,38 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 		
 		// ***DISTINCT***
 		// Parse the jurisdictions and dispatch areas
-		PCollection<Pair<String, String>> jurisdictionsAndDispatchAreas = callLines.parallelDo(
-				new PoliceJurisdictionAndDispatchAreaParseDoFN(), 
-				Writables.pairs(Writables.strings(), Writables.strings()));
-		
-		// Split the jurisdictions and dispatch areas into their own PCollections
-		Pair<PCollection<String>, PCollection<String>> split = Channels.split(jurisdictionsAndDispatchAreas);
-		PCollection<String> jurisdictions = split.first();
-		PCollection<String> dispatchAreas = split.second();
-		
-		// Get the distinct jurisdictions and dispatch areas
-		PCollection<String> distinctJurisdictions = Distinct.distinct(jurisdictions);
-		PCollection<String> distinctDispatchAreas = Distinct.distinct(dispatchAreas);
-		
-		// ***GROUPING - COST OF EACH PRIORITY BY DAY***
-		// First, switch the key & value of the mapJoined PTable from <Priority, <Cost, PoliceCall>> to <Dispatch Date<Priority, Cost>>
-		PTable<String, Pair<Integer, Double>> dateToPriorityAndCost = mapJoined.parallelDo(
-				new CalculateCallCostDoFN(),
-				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.ints(), Writables.doubles())));
-		
-		// Next, group the priorities together by the day of the call.
-		PGroupedTable<String, Pair<Integer, Double>> groupedByDateToPriorityAndCost = dateToPriorityAndCost.groupByKey();
-		
-		// Compute the cost for each priority level for each day
-		PTable<String, String> policeCallsBreakdown = groupedByDateToPriorityAndCost.parallelDo(
-				new PoliceCallBreakdownsDoFN(),
-				Writables.tableOf(Writables.strings(), Writables.strings()));
-		
-		// Write the costs for each priority per day to a text file
-		policeCallsBreakdown.write(To.textFile(output));
-		
-		System.out.println("Number of elements: " + callLines.getSize());
-		
-		// Submit the job for execution
-		PipelineResult result = callCostPipeline.done();
+	        PCollection<Pair<String, String>> jurisdictionsAndDispatchAreas = callLines.parallelDo(
+	    		    new PoliceJurisdictionAndDispatchAreaParseDoFN(), 
+			    Writables.pairs(Writables.strings(), Writables.strings()));
+	    
+	        // Split the jurisdictions and dispatch areas into their own PCollections
+	 	Pair<PCollection<String>, PCollection<String>> split = Channels.split(jurisdictionsAndDispatchAreas);
+	 	PCollection<String> jurisdictions = split.first();
+	 	PCollection<String> dispatchAreas = split.second();
+	 	
+	        // Get the distinct jurisdictions and dispatch areas
+	 	PCollection<String> distinctJurisdictions = Distinct.distinct(jurisdictions);
+	 	PCollection<String> distinctDispatchAreas = Distinct.distinct(dispatchAreas);
+	 	
+	        // ***GROUPING - COST OF EACH PRIORITY BY DAY***
+	 	// First, switch the key & value of the mapJoined PTable from <Priority, <Cost, PoliceCall>> to <Dispatch Date<Priority, Cost>>
+	 	PTable<String, Pair<Integer, Double>> dateToPriorityAndCost = mapJoined.parallelDo(
+	 			new CalculateCallCostDoFN(),
+	 			Writables.tableOf(Writables.strings(), Writables.pairs(Writables.ints(), Writables.doubles())));
+	 	
+	        // Next, group the priorities together by the day of the call.
+	 	PGroupedTable<String, Pair<Integer, Double>> groupedByDateToPriorityAndCost = dateToPriorityAndCost.groupByKey();
+	 	
+	        // Compute the cost for each priority level for each day
+	 	PTable<String, String> policeCallsBreakdown = groupedByDateToPriorityAndCost.parallelDo(
+	 			new PoliceCallBreakdownsDoFN(),
+	 			Writables.tableOf(Writables.strings(), Writables.strings()));
+	 	
+	        // Write the costs for each priority per day to a text file
+	 	policeCallsBreakdown.write(To.textFile(output));
+	 	
+	        // Submit the job for execution
+	 	PipelineResult result = pipeline.done();
 		
 		return result.succeeded() ? 0 : 1;
 	}
