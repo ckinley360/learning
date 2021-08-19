@@ -17,7 +17,7 @@ public class PoliceCostParseDoFN extends DoFn<String, Pair<Integer, Double>> {
 	 * Priority,Cost
 	 * 0,1003.91
 	 */
-	private static Pattern inputPattern = Pattern.compile("(\\d{1}),(.*)");
+	private static Pattern inputPattern = Pattern.compile("(\\d),(\\d*\\.\\d*)");
 	private static final Log LOG = LogFactory.getLog(PoliceCostParseDoFN.class);
 	
 	@Override
@@ -25,8 +25,8 @@ public class PoliceCostParseDoFN extends DoFn<String, Pair<Integer, Double>> {
 		Matcher inputMatch = inputPattern.matcher(line);
 		
 		if (inputMatch.matches()) {
-			int priority = Integer.parseInt(inputMatch.group(1));
-			double cost = Double.parseDouble(inputMatch.group(2));
+			Integer priority = Integer.parseInt(inputMatch.group(1));
+			Double cost = Double.parseDouble(inputMatch.group(2));
 			
 			emitter.emit(new Pair<Integer, Double>(priority, cost));
 		} else {
