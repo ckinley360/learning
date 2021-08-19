@@ -26,7 +26,7 @@ public class PoliceCallBreakdownsDoFN extends DoFn<Pair<String, Iterable<Pair<In
 		StringBuilder builder = new StringBuilder();
 		
 		for (int i = 0; i < priorityBreakdowns.length; i++) {
-			builder.append("Priority level ").append(i).append(" is ").append(priorityBreakdowns[i]).append(".");
+			builder.append("Priority level ").append(i).append(" is ").append(priorityBreakdowns[i]).append(". ");
 		}
 		
 		emitter.emit(new Pair<String, String>(day, builder.toString()));
