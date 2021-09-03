@@ -44,7 +44,7 @@ public class FireCallParseDoFN extends DoFn<String, FireCall> {
 		Matcher inputMatch = inputPattern.matcher(line);
 		
 		if (inputMatch.matches()) {
-			int priority = Integer.parseInt(inputMatch.group(1).replace("\"", ""));
+			int priority = inputMatch.group(1).equals("\"\"") ? 1 : Integer.parseInt(inputMatch.group(1).replace("\"", "")); // If this element only contains double quotes, then replace them with a 1.
 			String callType = inputMatch.group(2).replace("\"", "");
 			String jurisdiction = inputMatch.group(3).replace("\"", "");
 			String station = inputMatch.group(4).replace("\"", "");
@@ -57,10 +57,10 @@ public class FireCallParseDoFN extends DoFn<String, FireCall> {
 			try {
 				String callDateString = inputMatch.group(5).replace("\"", "");
 				Date callDate = yearFormat.parse(callDateString);
-				receiveTime = getFullTime(inputMatch.group(6).replace("\"", ""), callDate);
-				dispatchTime = getFullTime(inputMatch.group(7).replace("\"", ""), callDate);
-				arrivalTime = getFullTime(inputMatch.group(8).replace("\"", ""), callDate);
-				clearTime = getFullTime(inputMatch.group(10).replace("\"", ""), callDate);
+				receiveTime = inputMatch.group(6).equals("\"\"") ? getFullTime("000000", callDate) : getFullTime(inputMatch.group(6).replace("\"", "").replace(":", ""), callDate);
+				dispatchTime = inputMatch.group(7).equals("\"\"") ? getFullTime("000000", callDate) : getFullTime(inputMatch.group(7).replace("\"", "").replace(":", ""), callDate); 
+				arrivalTime = inputMatch.group(8).equals("\"\"") ? getFullTime("000000", callDate) : getFullTime(inputMatch.group(8).replace("\"", "").replace(":", ""), callDate); 
+				clearTime = inputMatch.group(10).equals("\"\"") ? getFullTime("000000", callDate) : getFullTime(inputMatch.group(10).replace("\"", "").replace(":", ""), callDate);
 			} catch (ParseException e) {
 				LOG.error("Exception thrown while parsing date. Input was \"" + line + "\".", e);
 			}
