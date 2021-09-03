@@ -11,6 +11,7 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
+import model.FireCall;
 import model.PoliceCall;
 
 public class CrunchFinal extends Configured implements Tool {
@@ -39,7 +40,7 @@ public class CrunchFinal extends Configured implements Tool {
 		// Read in the data from the source files
 		PCollection<String> callCostLines = pipeline.read(From.textFile(callCostInput));
 		PCollection<PoliceCall> policeCallLines = pipeline.read(From.avroFile(policeCallInput, PoliceCall.class));
-		PCollection<String> fireCallLines = pipeline.read(From.textFile(fireCallInput));
+		PCollection<FireCall> fireCallLines = pipeline.read(From.avroFile(fireCallInput, FireCall.class));
 		
 		// Parse the call cost, police call, and fire call data, then store in PTables
 		// <Priority, Cost>
@@ -50,5 +51,7 @@ public class CrunchFinal extends Configured implements Tool {
 		PTable<Integer, PoliceCall> policeCalls = policeCallLines.parallelDo(
 				new PolicePriorityParseDoFN(), 
 				Avros.tableOf(Avros.ints(), Avros.specifics(PoliceCall.class)));
+		
+		return 1;
 	}
 }
