@@ -9,6 +9,7 @@ import org.apache.crunch.io.From;
 import org.apache.crunch.lib.join.JoinType;
 import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
+import org.apache.crunch.types.writable.Writables;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.util.Tool;
@@ -71,6 +72,14 @@ public class CrunchFinal extends Configured implements Tool {
 		PTable<Integer, Pair<Double, FireCall>> fireMapJoined = fireMapSideStrategy.join(callCost, fireCalls, JoinType.INNER_JOIN);
 		
 		// ***GROUPING***
+		// First, switch the key & value of the policeMapJoined & fireMapJoined PTables from <Priority, <Cost, PoliceCall>> & <Priority, <Cost, FireCall>> to 
+		// <Dispatch Date, Cost>
+		PTable<String, Double> policeDateToCost = policeMapJoined.parallelDo(
+				new PoliceParseDateAndCostDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.doubles()));
+		PTable<String, Double> fireDateToCost = fireMapJoined.parallelDo(
+				new FireParseDateAndCostDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.doubles())); 
 		
 		return 1;
 	}
