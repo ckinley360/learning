@@ -83,7 +83,7 @@ public class AdvancedCrunchPolice extends Configured implements Tool {
 	 	PCollection<String> distinctDispatchAreas = Distinct.distinct(dispatchAreas);
 	 	
 	        // ***GROUPING - COST OF EACH PRIORITY BY DAY***
-	 	// First, switch the key & value of the mapJoined PTable from <Priority, <Cost, PoliceCall>> to <Dispatch Date<Priority, Cost>>
+	 	// First, switch the key & value of the mapJoined PTable from <Priority, <Cost, PoliceCall>> to <Dispatch Date, <Priority, Cost>>
 	 	PTable<String, Pair<Integer, Double>> dateToPriorityAndCost = mapJoined.parallelDo(
 	 			new CalculateCallCostDoFN(),
 	 			Writables.tableOf(Writables.strings(), Writables.pairs(Writables.ints(), Writables.doubles())));
