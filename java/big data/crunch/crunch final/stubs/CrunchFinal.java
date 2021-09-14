@@ -2,9 +2,12 @@ package stubs;
 
 import org.apache.crunch.PCollection;
 import org.apache.crunch.PTable;
+import org.apache.crunch.Pair;
 import org.apache.crunch.Pipeline;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
+import org.apache.crunch.lib.join.JoinType;
+import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -51,6 +54,23 @@ public class CrunchFinal extends Configured implements Tool {
 		PTable<Integer, PoliceCall> policeCalls = policeCallLines.parallelDo(
 				new PolicePriorityParseDoFN(), 
 				Avros.tableOf(Avros.ints(), Avros.specifics(PoliceCall.class)));
+		// <Priority, FireCall>
+		PTable<Integer, FireCall> fireCalls = fireCallLines.parallelDo(
+				new FirePriorityParseDoFN(),
+				Avros.tableOf(Avros.ints(), Avros.specifics(FireCall.class)));
+		
+		// ***JOINS***
+		// Create the MapSideJoinStrategy objects
+		MapsideJoinStrategy<Integer, Double, PoliceCall> policeMapSideStrategy = MapsideJoinStrategy.create();
+		MapsideJoinStrategy<Integer, Double, FireCall> fireMapSideStrategy = MapsideJoinStrategy.create();
+		
+		// Join the tables
+		// <Priority, <Cost, PoliceCall>>
+		PTable<Integer, Pair<Double, PoliceCall>> policeMapJoined = policeMapSideStrategy.join(callCost, policeCalls, JoinType.INNER_JOIN);
+		// <Priority, <Cost, FireCall>>
+		PTable<Integer, Pair<Double, FireCall>> fireMapJoined = fireMapSideStrategy.join(callCost, fireCalls, JoinType.INNER_JOIN);
+		
+		// ***GROUPING***
 		
 		return 1;
 	}
