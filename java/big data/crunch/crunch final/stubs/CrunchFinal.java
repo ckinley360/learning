@@ -1,11 +1,15 @@
 package stubs;
 
+import org.apache.crunch.fn.Aggregators;
 import org.apache.crunch.PCollection;
+import org.apache.crunch.PGroupedTable;
 import org.apache.crunch.PTable;
 import org.apache.crunch.Pair;
 import org.apache.crunch.Pipeline;
+import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
+import org.apache.crunch.io.To;
 import org.apache.crunch.lib.join.JoinType;
 import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
@@ -81,6 +85,21 @@ public class CrunchFinal extends Configured implements Tool {
 				new FireParseDateAndCostDoFN(),
 				Writables.tableOf(Writables.strings(), Writables.doubles())); 
 		
-		return 1;
+		// Next, group the costs together by the day of the call
+		PGroupedTable<String, Double> policeGroupedByDateToCost = policeDateToCost.groupByKey();
+		PGroupedTable<String, Double> fireGroupedByDateToCost = fireDateToCost.groupByKey();
+		
+		// Then, sum the group values.
+		PTable<String, Double> policeCostPerDay = policeGroupedByDateToCost.combineValues(Aggregators.SUM_DOUBLES());
+		PTable<String, Double> fireCostPerDay = fireGroupedByDateToCost.combineValues(Aggregators.SUM_DOUBLES());
+		
+		// Write the costs per day to two text files
+		policeCostPerDay.write(To.textFile(output + "_police"));
+		fireCostPerDay.write(To.textFile(output + "_fire"));
+		
+		// Submit the job for execution
+		PipelineResult result = pipeline.done();
+		
+		return result.succeeded() ? 0 : 1;
 	}
 }
