@@ -98,6 +98,7 @@ public class CrunchFinal extends Configured implements Tool {
 //		policeCostPerDay.write(To.textFile(output + "_police"));
 //		fireCostPerDay.write(To.textFile(output + "_fire"));
 		
+		// ***RUNNING AVERAGE OF COST OVER TIME***
 		// Prepare the datasets for a secondary sort by making the key the call type ("police" or "fire"), and the value a pair of date & cost.
 		PTable<String, Pair<String, Double>> secondarySortablePoliceCostPerDay = policeCostPerDay.parallelDo(
 				new makePoliceCostPerDaySecondarySortableDoFN(),
