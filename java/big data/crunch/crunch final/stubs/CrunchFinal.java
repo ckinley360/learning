@@ -10,6 +10,7 @@ import org.apache.crunch.PipelineResult;
 import org.apache.crunch.impl.mr.MRPipeline;
 import org.apache.crunch.io.From;
 import org.apache.crunch.io.To;
+import org.apache.crunch.lib.SecondarySort;
 import org.apache.crunch.lib.join.JoinType;
 import org.apache.crunch.lib.join.MapsideJoinStrategy;
 import org.apache.crunch.types.avro.Avros;
@@ -89,13 +90,35 @@ public class CrunchFinal extends Configured implements Tool {
 		PGroupedTable<String, Double> policeGroupedByDateToCost = policeDateToCost.groupByKey();
 		PGroupedTable<String, Double> fireGroupedByDateToCost = fireDateToCost.groupByKey();
 		
-		// Then, sum the group values.
+		// Then, sum the group values to get the cost per day. Each row is unique - date, cost.
 		PTable<String, Double> policeCostPerDay = policeGroupedByDateToCost.combineValues(Aggregators.SUM_DOUBLES());
 		PTable<String, Double> fireCostPerDay = fireGroupedByDateToCost.combineValues(Aggregators.SUM_DOUBLES());
 		
 		// Write the costs per day to two text files
-		policeCostPerDay.write(To.textFile(output + "_police"));
-		fireCostPerDay.write(To.textFile(output + "_fire"));
+//		policeCostPerDay.write(To.textFile(output + "_police"));
+//		fireCostPerDay.write(To.textFile(output + "_fire"));
+		
+		// Prepare the datasets for a secondary sort by making the key the call type ("police" or "fire"), and the value a pair of date & cost.
+		PTable<String, Pair<String, Double>> secondarySortablePoliceCostPerDay = policeCostPerDay.parallelDo(
+				new makePoliceCostPerDaySecondarySortableDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.strings(), Writables.doubles())));
+		PTable<String, Pair<String, Double>> secondarySortableFireCostPerDay = fireCostPerDay.parallelDo(
+				new makeFireCostPerDaySecondarySortableDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.strings(), Writables.doubles())));
+		
+		// Run a secondary sort on the costs per day to calculate a running average for each dataset
+		PTable<String, Pair<String, Double>> policeCallCostRunningAverage = SecondarySort.sortAndApply(
+				secondarySortablePoliceCostPerDay,
+				new SecondarySortRunningAverageDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.strings(), Writables.doubles())));
+		PTable<String, Pair<String, Double>> fireCallCostRunningAverage = SecondarySort.sortAndApply(
+				secondarySortableFireCostPerDay,
+				new SecondarySortRunningAverageDoFN(),
+				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.strings(), Writables.doubles())));
+		
+		// Write the cost running averages to two text files
+		policeCallCostRunningAverage.write(To.textFile(output + "_police"));
+		fireCallCostRunningAverage.write(To.textFile(output + "_fire"));
 		
 		// Submit the job for execution
 		PipelineResult result = pipeline.done();
