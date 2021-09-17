@@ -31,20 +31,25 @@ public class CrunchFinal extends Configured implements Tool {
 	
 	public int run(String[] args) throws Exception {
 		// Parse the args
-		String callCostInput, policeCallInput, fireCallInput, output;
+		String callCostInput, policeCallInput, fireCallInput, output, runningAverageEndDate;
 		
-		if (args.length == 4) {
+		if (args.length == 5) {
 			callCostInput = args[0];
 			policeCallInput = args[1];
 			fireCallInput = args[2];
 			output = args[3];
+			runningAverageEndDate = args[4];
 		} else {
-			System.err.println("Expected: callCostInput policeCallInput fireCallInput output");
+			System.err.println("Expected: callCostInput policeCallInput fireCallInput output runningAverageEndDate(yyyy/MM/dd)");
 			return -1;
 		}
 		
+		// Create the Hadoop Conf, and set custom parameters
+		Configuration crunchConf = getConf();
+		crunchConf.set("running_average_end_date", runningAverageEndDate);
+		
 		// Create the pipeline
-		Pipeline pipeline = new MRPipeline(CrunchFinal.class, getConf());
+		Pipeline pipeline = new MRPipeline(CrunchFinal.class, crunchConf);
 		
 		// Read in the data from the source files
 		PCollection<String> callCostLines = pipeline.read(From.textFile(callCostInput));
