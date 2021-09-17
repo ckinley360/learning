@@ -31,22 +31,24 @@ public class CrunchFinal extends Configured implements Tool {
 	
 	public int run(String[] args) throws Exception {
 		// Parse the args
-		String callCostInput, policeCallInput, fireCallInput, output, runningAverageEndDate;
+		String callCostInput, policeCallInput, fireCallInput, output, runningAverageEndDate, callLevels;
 		
-		if (args.length == 5) {
+		if (args.length == 6) {
 			callCostInput = args[0];
 			policeCallInput = args[1];
 			fireCallInput = args[2];
 			output = args[3];
 			runningAverageEndDate = args[4];
+			callLevels = args[5];
 		} else {
-			System.err.println("Expected: callCostInput policeCallInput fireCallInput output runningAverageEndDate(yyyy/MM/dd)");
+			System.err.println("Expected: callCostInput policeCallInput fireCallInput output runningAverageEndDate(yyyy/MM/dd) callLevels(level;level)");
 			return -1;
 		}
 		
 		// Create the Hadoop Conf, and set custom parameters
 		Configuration crunchConf = getConf();
-		crunchConf.set("running_average_end_date", runningAverageEndDate);
+		crunchConf.set("running_average_end_date", runningAverageEndDate); // This is a string representing a date in yyyy/MM/dd format
+		crunchConf.set("call_levels", callLevels); // This is a semicolon-separated string of call levels
 		
 		// Create the pipeline
 		Pipeline pipeline = new MRPipeline(CrunchFinal.class, crunchConf);
