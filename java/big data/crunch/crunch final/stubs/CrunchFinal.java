@@ -124,9 +124,13 @@ public class CrunchFinal extends Configured implements Tool {
 				new SecondarySortRunningAverageDoFN(),
 				Writables.tableOf(Writables.strings(), Writables.pairs(Writables.strings(), Writables.doubles())));
 		
-		// Write the cost running averages to two text files
+		// Union the police and fire running average PTables so we can output both datasets in one file
+		PTable<String, Pair<String, Double>> policeAndFireCallCostRunningAverage = policeCallCostRunningAverage.union(fireCallCostRunningAverage);
+		
+		// Write the cost running averages to three text files - only police calls, only fire calls, both police and fire calls
 		policeCallCostRunningAverage.write(To.textFile(output + "_police"));
 		fireCallCostRunningAverage.write(To.textFile(output + "_fire"));
+		policeAndFireCallCostRunningAverage.write(To.textFile(output + "_both"));
 		
 		// Submit the job for execution
 		PipelineResult result = pipeline.done();
