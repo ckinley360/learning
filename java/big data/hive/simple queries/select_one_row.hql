@@ -1,0 +1,3 @@
+SELECT *
+FROM PoliceCalls
+LIMIT 1;
