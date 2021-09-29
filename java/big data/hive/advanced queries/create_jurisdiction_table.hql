@@ -1,0 +1,6 @@
+CREATE TABLE jurisdictions (
+  code STRING,
+  description STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
