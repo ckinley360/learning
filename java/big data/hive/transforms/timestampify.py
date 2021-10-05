@@ -36,5 +36,29 @@ for line in sys.stdin.readlines():
 	# If the times are good data, then merge them with the date.
 	pattern = '[0-9]{6}'
 
-	if bool(re.match(pattern, receivedTime))
+	if re.match(pattern, receivedTime):
 		convertedReceivedTime = datetime.strptime(convertedReceivedDate + ' ' + receivedTime, '%Y-%m-%d %H%M%S')
+	else:
+		receivedTime = '000000'
+		convertedReceivedTime = datetime.strptime(convertedReceivedDate + ' ' + receivedTime, '%Y-%m-%d %H%M%S')
+
+	if re.match(pattern, dispatchTime):
+		convertedDispatchTime = datetime.strptime(convertedReceivedDate + ' ' + dispatchTime, '%Y-%m-%d %H%M%S')
+	else:
+		dispatchTime = '000000'
+		convertedDispatchTime = datetime.strptime(convertedReceivedDate + ' ' + dispatchTime, '%Y-%m-%d %H%M%S')
+
+	if re.match(pattern, arrivalTime):
+		convertedArrivalTime = datetime.strptime(convertedReceivedDate + ' ' + arrivalTime, '%Y-%m-%d %H%M%S')
+	else:
+		arrivalTime = '000000'
+		convertedArrivalTime = datetime.strptime(convertedReceivedDate + ' ' + arrivalTime, '%Y-%m-%d %H%M%S')
+
+	if re.match(pattern, clearedTime):
+		convertedClearedTime = datetime.strptime(convertedReceivedDate + ' ' + clearedTime, '%Y-%m-%d %H%M%S')
+	else:
+		clearedTime = '000000'
+		convertedClearedTime = datetime.strptime(convertedReceivedDate + ' ' + clearedTime, '%Y-%m-%d %H%M%S')
+
+	# Output the entire timestampified row with tab separation
+	print(priority + '\t' + callType + '\t' + jurisdiction + '\t' + dispatchArea + '\t' + receivedDate + '\t' + convertedReceivedTime + '\t' + convertedDispatchTime + '\t' + convertedArrivalTime + '\t' + convertedClearedTime)
