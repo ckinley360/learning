@@ -61,4 +61,4 @@ for line in sys.stdin.readlines():
 		convertedClearedTime = datetime.strptime(convertedReceivedDate + ' ' + clearedTime, '%Y-%m-%d %H%M%S')
 
 	# Output the entire timestampified row with tab separation
-	print(priority + ',' + callType + ',' + jurisdiction + ',' + dispatchArea + ',' + receivedDate + ',' + str(convertedReceivedTime) + ',' + str(convertedDispatchTime) + ',' + str(convertedArrivalTime) + ',' + str(convertedClearedTime))
+	print(priority + ',' + callType + ',' + jurisdiction + ',' + dispatchArea + ',' + receivedDate + ',' + str(convertedReceivedTime) + ',' + str(convertedDispatchTime) + ',' + str(convertedArrivalTime) + ',' + str(convertedClearedTime) + ',' + disposition)
