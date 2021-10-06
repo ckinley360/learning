@@ -16,15 +16,15 @@ for line in sys.stdin.readlines():
 
 	# Put each piece into its own variable. Make each variable a string, and remove leading and
 	# trailing whitespace to deal with bad data.
-	priority = str(pieces[0]).strip(),
-	callType = str(pieces[1]).strip(),
-	jurisdiction = str(pieces[2]).strip(),
-	dispatchArea = str(pieces[3]).strip(),
-	receivedDate = str(pieces[4]).strip(),
-	receivedTime = str(pieces[5]).strip(),
-	dispatchTime = str(pieces[6]).strip(),
-	arrivalTime = str(pieces[7]).strip(),
-	clearedTime = str(pieces[8]).strip(),
+	priority = str(pieces[0]).strip()
+	callType = str(pieces[1]).strip()
+	jurisdiction = str(pieces[2]).strip()
+	dispatchArea = str(pieces[3]).strip()
+	receivedDate = str(pieces[4]).strip()
+	receivedTime = str(pieces[5]).strip()
+	dispatchTime = str(pieces[6]).strip()
+	arrivalTime = str(pieces[7]).strip()
+	clearedTime = str(pieces[8]).strip()
 	disposition = str(pieces[9]).strip()
 
 	# If the receivedDate has bad data, then skip this line of data.
@@ -61,4 +61,4 @@ for line in sys.stdin.readlines():
 		convertedClearedTime = datetime.strptime(convertedReceivedDate + ' ' + clearedTime, '%Y-%m-%d %H%M%S')
 
 	# Output the entire timestampified row with tab separation
-	print(priority + '\t' + callType + '\t' + jurisdiction + '\t' + dispatchArea + '\t' + receivedDate + '\t' + convertedReceivedTime + '\t' + convertedDispatchTime + '\t' + convertedArrivalTime + '\t' + convertedClearedTime)
+	print(priority + ',' + callType + ',' + jurisdiction + ',' + dispatchArea + ',' + receivedDate + ',' + str(convertedReceivedTime) + ',' + str(convertedDispatchTime) + ',' + str(convertedArrivalTime) + ',' + str(convertedClearedTime))
