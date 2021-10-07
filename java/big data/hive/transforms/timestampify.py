@@ -6,7 +6,7 @@ import re
 
 # Sample input header and row:
 # Priority,Call_Type,Jurisdiction,Dispatch_Area,Received_Date,Received_Time,Dispatch_Time,Arrival_Time,Cleared_Time,Disposition
-# 3,SUSPV,RP,RS, 03/21/2013,173011,182946,182946,183107,OK
+# 3\tSUSPV\tRP\tRS\t 03/21/2013\t173011\t182946\t182946\t183107\tOK
 # https://www.programiz.com/python-programming/online-compiler/
 
 try:
