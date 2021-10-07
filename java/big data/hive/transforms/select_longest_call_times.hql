@@ -1,4 +1,4 @@
-ADD FILE /home/vmuser/training/exercise_code/hadoop/hivetransform/calculate_call_time.py;
+ADD FILE /path/to/calculate_call_time.py;
 
 SELECT
 TRANSFORM(priority, calltype, jurisdiction, dispatcharea, receiveddate, receivedtime, dispatchtime, arrivaltime, clearedtime, disposition)
