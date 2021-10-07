@@ -67,6 +67,7 @@ try:
 			print(priority + '\t' + callType + '\t' + jurisdiction + '\t' + dispatchArea + '\t' + receivedDate + '\t' + str(convertedReceivedTime) + '\t' + str(convertedDispatchTime) + '\t' + str(convertedArrivalTime) + '\t' + str(convertedClearedTime) + '\t' + disposition)	
 		else:
 			continue
+			
 except:
 	# In the case of an exception, write the stack trace to stdout so we can see it in Hive, in the results of the UDF call.
 	print(sys.exc_info())
