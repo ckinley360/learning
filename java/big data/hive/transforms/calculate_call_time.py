@@ -59,6 +59,7 @@ try:
 			print(int(timeDifferenceInSeconds))
 		else:
 			continue
+			
 except:
 	# In the case of an exception, write the stack trace to stdout so we can see it in Hive, in the results of the UDF call.
 	print(sys.exc_info())
