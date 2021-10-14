@@ -27,7 +27,7 @@ public class CallCalculator extends UDF {
 		try {
 			parsedDate = LocalDateTime.parse(stringDate, formatter);
 		} catch (Exception e) {
-			System.out.println("Exception thrown while parsing date. Input was \"" + date.toString() + "\".");
+			System.out.println("Exception thrown while parsing date. Input was \"" + stringDate + "\".");
 			return new LongWritable(0);
 		}
 		
