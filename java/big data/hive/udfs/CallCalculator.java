@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 @Description(name = "time_diff_seconds",
              value = "_FUNC_(date, startTime, endTime) - Calculates the difference in minutes.",
-             extended = "Example:\n" + " > SELECT _FUNC_('2021-10-07', 082245, 103611) FROM src LIMIT 1;\n")
+             extended = "Example:\n" + " > SELECT _FUNC_(' 10/7/2021', 102245, 133611) FROM src LIMIT 1;\n")
 
 public class CallCalculator extends UDF {
 
