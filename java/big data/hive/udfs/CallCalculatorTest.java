@@ -18,8 +18,8 @@ public class CallCalculatorTest {
 	
 	@Test
 	public void testTimeDifference() {
-		long output = callCalculator.evaluate(new Text(" 4/16/2021"), new IntWritable(053000), new IntWritable(131503)).get();
+		long output = callCalculator.evaluate(new Text(" 4/16/2021"), new IntWritable(123000), new IntWritable(123500)).get();
 		
-		assertEquals("Output does not match", 465, output);
+		assertEquals("Output does not match", 5, output);
 	}
 }
