@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Description(name = "time_diff_seconds",
+@Description(name = "time_diff_minutes",
              value = "_FUNC_(date, startTime, endTime) - Calculates the difference in minutes.",
              extended = "Example:\n" + " > SELECT _FUNC_(' 10/7/2021', 102245, 133611) FROM src LIMIT 1;\n")
 
