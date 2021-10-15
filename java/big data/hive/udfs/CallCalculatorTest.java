@@ -24,7 +24,6 @@ public class CallCalculatorTest {
 		
 		// Incorrect input
 		long output = callCalculator.evaluate(new Text(" 4-16-2021"), new IntWritable(133000), new IntWritable(144500)).get();
-		
 		assertEquals("Output does not match", 0, output);
 	}
 }
