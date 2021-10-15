@@ -7,7 +7,9 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,12 +24,12 @@ public class CallCalculator extends UDF {
 		// If the date is bad data, then return 0. Otherwise, parse it.
 		String stringDate = date.toString().trim();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
-		LocalDateTime parsedDate;
+		LocalDate parsedDate;
 		
 		try {
-			parsedDate = LocalDateTime.parse(stringDate, formatter);
+			parsedDate = LocalDate.parse(stringDate, formatter);
 		} catch (Exception e) {
-			System.out.println("Exception thrown while parsing date. Input was \"" + stringDate + "\".");
+			System.out.println("Exception thrown while parsing date. Input was \"" + stringDate + "\"." + "\n" + e);
 			return new LongWritable(0);
 		}
 		
@@ -57,8 +59,8 @@ public class CallCalculator extends UDF {
 		}
 		
 		// Create two datetime objects - date & start time, date & end time.
-		LocalDateTime startDateTime = parsedDate.plusHours(startTimeHour).plusMinutes(startTimeMinute).plusSeconds(startTimeSecond);
-		LocalDateTime endDateTime = parsedDate.plusHours(endTimeHour).plusMinutes(endTimeMinute).plusSeconds(endTimeSecond);
+		LocalDateTime startDateTime = LocalDateTime.of(parsedDate, LocalTime.of(startTimeHour, startTimeMinute, startTimeSecond));
+		LocalDateTime endDateTime = LocalDateTime.of(parsedDate, LocalTime.of(endTimeHour, endTimeMinute, endTimeSecond));
 		
 		// Calculate the time difference between the start datetime and end datetime.
 		Duration duration = Duration.between(startDateTime, endDateTime);
