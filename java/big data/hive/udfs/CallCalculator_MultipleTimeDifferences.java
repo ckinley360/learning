@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class CallCalculator_MultipleTimeDifferences extends UDF {
 
 	public Map<IntWritable, LongWritable> evaluate(Text date, IntWritable timeOne, IntWritable timeTwo, IntWritable timeThree, IntWritable timeFour) {
-		// If the date is bad data, then return {0 : 0}. Otherwise, parse it.
+		// If the date is bad data, then return {0:0}. Otherwise, parse it.
 		String stringDate = date.toString().trim();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M/d/yyyy");
 		LocalDate parsedDate;
