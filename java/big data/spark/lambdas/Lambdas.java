@@ -49,63 +49,29 @@ public class Lambdas {
 	}
 	
 	public static void printListThreeWays(List<String> myList) {
-		// Manual for loop
-		System.out.println("***Manual for loop***");
-		for (int i = 0; i < myList.size(); i++) {
-			System.out.println(myList.get(i));
-		}
+		// Lambda notation 1
+		System.out.println("***Lambda notation 1***");
+		myList.forEach((String myString) -> System.out.println(myString));
 		
 		System.out.println("---------------------");
 		
-		// Java 1.5 for loop
-		System.out.println("***Java 1.5 for loop***");
-		for (String myString : myList) {
-			System.out.println(myString);
-		}
+		// Lambda notation 2
+		System.out.println("***Lambda notation 2***");
+		myList.forEach(myString -> System.out.println(myString));
 		
 		System.out.println("---------------------");
 		
-		// Java 1.8 for each loop
-		System.out.println("***Java 1.8 for each loop***");
-		myList.forEach(new Consumer<String>() {
-			@Override
-			public void accept(String myString) {
-				System.out.println(myString);
-			}
-		});
+		// Lambda notation 3
+		System.out.println("***Lambda notation 3***");
+		myList.forEach(System.out::println);
 	}
 	
 	public static void printWordsWithLetterA(List<String> myList) {
-		// Manual for loop
-				System.out.println("***Manual for loop***");
-				for (int i = 0; i < myList.size(); i++) {
-					if (myList.get(i).contains("a")) {
-						System.out.println(CommonStrings.getAlphabetStrings().get(i));
-					}
-				}
-				
-				System.out.println("---------------------");
-				
-				// Java 1.5 for loop
-				System.out.println("***Java 1.5 for loop***");
-				for (String myString : myList) {
-					if (myString.contains("a")) {
-						System.out.println(myString);
-					}
-				}
-				
-				System.out.println("---------------------");
-				
-				// Java 1.8 for each loop
-				System.out.println("***Java 1.8 for each loop***");
-				myList.forEach(new Consumer<String>() {
-					@Override
-					public void accept(String myString) {
-						if (myString.contains("a")) {
-							System.out.println(myString);
-						}
-					}
-				});
+		myList.forEach((String myString) -> {
+			if (myString.contains("a")) {
+				System.out.println(myString);
+			}
+		});
 	}
 	
 	public static void sortLexicographically(List<String> stringList) {
