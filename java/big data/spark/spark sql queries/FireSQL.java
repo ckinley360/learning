@@ -57,11 +57,14 @@ public class FireSQL {
 		// Run queries on the temp table
 		Dataset<Row> alarmLevelOne = sqlContext.sql("SELECT * FROM firecalls WHERE alarm_level = '1'");
 		Dataset<Row> janThird = sqlContext.sql("SELECT * FROM firecalls WHERE receive_date = '1/3/2013'");
-		Dataset<Row> callCountByCallType = sqlContext.sql("SELECT call_type, COUNT(*) AS count_of_calls FROM firecalls GROUP BY call_type");
+		Dataset<Row> callCountByCallType = sqlContext.sql("SELECT call_type, COUNT(*) AS count_of_calls FROM firecalls GROUP BY call_type ORDER BY COUNT(*) DESC");
 		
 		// Output the results of the 3rd query to the console
-		callCountByCallType.javaRDD().collect().forEach((Row row) -> {
-			System.out.println("Result:" + row.toString());
-		});
+//		callCountByCallType.javaRDD().collect().forEach((Row row) -> {
+//			System.out.println("Result:" + row.toString());
+//		});
+		
+		// Save the firecalls dataframe to disk
+		dataFrame.save("/home/vmuser/training/datasets/firecalls");
 	}
 }
