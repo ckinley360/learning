@@ -65,6 +65,6 @@ public class FireSQL {
 //		});
 		
 		// Save the firecalls dataframe to disk
-		dataFrame.save("/home/vmuser/training/datasets/firecalls");
+		dataFrame.write().format("parquet").save("/home/vmuser/training/datasets/firecalls");
 	}
 }
