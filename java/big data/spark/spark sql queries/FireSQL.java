@@ -29,9 +29,19 @@ public class FireSQL {
 		JavaRDD<Row> rows = lines.map((String line) -> {
 			String[] parts = line.split(",");
 			
+			// Format the date so it is mm/dd/yyyy
+			String[] dateParts = parts[4].replace("\"", "").split("/");
+			if (dateParts[0].length() == 1) {
+				dateParts[0] = "0" + dateParts[0];
+			}
+			if (dateParts[1].length() == 1) {
+				dateParts[1] = "0" + dateParts[1];
+			}
+			String formattedDate = dateParts[0] + "/" + dateParts[1] + "/" + dateParts[2];
+			
 			// ALARM_LEVEL, CALL_TYPE, JURISDICTION, STATION, RECEIVED_DATE, RECEIVED_TIME, DISPATCH_1ST_TIME, ONSCENE_1ST_TIME, FIRE_CONTROL_TIME, CLOSE_TIME
 			// "1", "EMS", "RF", "01", "1/1/2012", "00:00:52", "00:01:11", "00:01:44", "", "00:08:11"
-			return RowFactory.create(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6], parts[7], parts[8], parts[9]);
+			return RowFactory.create(parts[0].replace("\"", ""), parts[1].replace("\"", ""), parts[2].replace("\"", ""), parts[3].replace("\"", ""), formattedDate, parts[5].replace("\"", ""), parts[6].replace("\"", ""), parts[7].replace("\"", ""), parts[8].replace("\"", ""), parts[9].replace("\"", ""));
 		});
 		
 		// Create the dataframe
