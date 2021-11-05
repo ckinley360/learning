@@ -40,6 +40,33 @@ public class TimeUDF {
 		sqlContext.udf().register("timestampify", (String dateString, String timeString) -> {
 			String[] dateParts = dateString.split("/");
 			String[] timeParts = timeString.split(":");
+			int year;
+			int month;
+			int day;
+			int hour;
+			int minute;
+			int second;
+			
+			// If the date is an empty string, use the Unix epoch (1/1/1970). If the time is an empty string, use midnight (00:00:00).
+			if (dateParts.length == 0) {
+				year = 1970;
+				month = 1;
+				day = 1;
+			} else {
+				year = Integer.valueOf(dateParts[2]);
+				month = Integer.valueOf(dateParts[0]);
+				day = Integer.valueOf(dateParts[1]);
+			}
+			
+			if (timeParts.length == 0) {
+				hour = 0;
+				minute = 0;
+				second = 0;
+			} else {
+				hour = Integer.valueOf(timeParts[0]);
+				minute = Integer.valueOf(timeParts[1]);
+				second = Integer.valueOf(timeParts[2]);
+			}
 			
 			return Timestamp.valueOf(LocalDateTime.of(Integer.valueOf(dateParts[2]), Integer.valueOf(dateParts[0]), Integer.valueOf(dateParts[1]), Integer.valueOf(timeParts[0]), Integer.valueOf(timeParts[1]), Integer.valueOf(timeParts[2])));
 		}, DataTypes.TimestampType);
