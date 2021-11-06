@@ -73,7 +73,7 @@ public class TimeUDF {
 		}, DataTypes.TimestampType);
 		
 		// Run a query using the timestampify UDF
-		Dataset<Row> timeStampifiedData = sqlContext.sql("SELECT receive_date, receive_time, timestampify(receive_date, receive_time) FROM fire LIMIT 10");
+		Dataset<Row> timeStampifiedData = sqlContext.sql("SELECT receive_date, receive_time, timestampify(receive_date, receive_time) AS timestamp FROM fire LIMIT 10");
 		
 		// Print out the timestampified data
 //		timeStampifiedData.javaRDD().collect().forEach((Row row) -> {
@@ -133,5 +133,13 @@ public class TimeUDF {
 			
 			return duration.getSeconds();
 		}, DataTypes.LongType);
+		
+		// Run a query using the datetimediff UDF
+		Dataset<Row> datetimeDiffedData = sqlContext.sql("SELECT receive_date, receive_time, close_time, datetimediff(receive_date, receive_time, close_time) AS diffInSeconds FROM fire LIMIT 10");
+		
+		// Print out the datetimediffed data
+		datetimeDiffedData.javaRDD().collect().forEach((Row row) -> {
+			System.out.println("Result: " + row.toString());
+		});
 	}
 }
