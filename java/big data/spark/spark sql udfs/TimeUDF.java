@@ -72,13 +72,13 @@ public class TimeUDF {
 			return Timestamp.valueOf(LocalDateTime.of(year, month, day, hour, minute, second));
 		}, DataTypes.TimestampType);
 		
-		// Output data using the timestampify UDF
+		// Run a query using the timestampify UDF
 		Dataset<Row> timeStampifiedData = sqlContext.sql("SELECT receive_date, receive_time, timestampify(receive_date, receive_time) FROM fire LIMIT 10");
 		
 		// Print out the timestampified data
-		timeStampifiedData.javaRDD().collect().forEach((Row row) -> {
-			System.out.println("Result: " + row.toString());
-		});
+//		timeStampifiedData.javaRDD().collect().forEach((Row row) -> {
+//			System.out.println("Result: " + row.toString());
+//		});
 		
 		// Create a UDF to convert a date, time1, and time2 into two datetimes, then calculate the number of seconds between the two datetimes.
 		sqlContext.udf().register("datetimediff", (String dateString, String timeOneString, String timeTwoString) -> {
