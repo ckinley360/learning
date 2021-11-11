@@ -26,54 +26,71 @@ public class sparkfinal {
 	public static void main(String[] args) {
 		// Receive the filepath arguments and create File objects with them 
 		File alkFile = new File(args[0]);
-//		File amznFile = new File(args[1]);
-//		File atviFile = new File(args[2]);
-//		File coinFile = new File(args[3]);
-//		File dbxFile = new File(args[4]);
-//		File docuFile = new File(args[5]);
-//		File googFile = new File(args[6]);
-//		File googlFile = new File(args[7]);
-//		File jnjFile = new File(args[8]);
-//		File jpmFile = new File(args[9]);
-//		File msftFile = new File(args[10]);
-//		File nflxFile = new File(args[11]);
-//		File nvdaFile = new File(args[12]);
-//		File psxFile = new File(args[13]);
-//		File pyplFile = new File(args[14]);
-//		File qcomFile = new File(args[15]);
-//		File rdfnFile = new File(args[16]);
-//		File rostFile = new File(args[17]);
-//		File sbuxFile = new File(args[18]);
-//		File sqFile = new File(args[19]);
+		File amznFile = new File(args[1]);
+		File atviFile = new File(args[2]);
+		File coinFile = new File(args[3]);
+		File dbxFile = new File(args[4]);
+		File docuFile = new File(args[5]);
+		File googFile = new File(args[6]);
+		File googlFile = new File(args[7]);
+		File jnjFile = new File(args[8]);
+		File jpmFile = new File(args[9]);
+		File msftFile = new File(args[10]);
+		File nflxFile = new File(args[11]);
+		File nvdaFile = new File(args[12]);
+		File psxFile = new File(args[13]);
+		File pyplFile = new File(args[14]);
+		File qcomFile = new File(args[15]);
+		File rdfnFile = new File(args[16]);
+		File rostFile = new File(args[17]);
+		File sbuxFile = new File(args[18]);
+		File sqFile = new File(args[19]);
 		
 		// Read in the data
 		JavaRDD<Row> alkRows = readNasdaqData(sc.textFile(alkFile.getPath()), alkFile.getName().replace(".csv", ""));
-//		JavaRDD<Row> amznRows = amznInput;
-//		JavaRDD<Row> atviRows = atviInput;
-//		JavaRDD<Row> coinRows = coinInput;
-//		JavaRDD<Row> dbxRows = dbxInput;
-//		JavaRDD<Row> docuRows = docuInput;
-//		JavaRDD<Row> googRows = googInput;
-//		JavaRDD<Row> googlRows = googlInput;
-//		JavaRDD<Row> jnjRows = jnjInput;
-//		JavaRDD<Row> jpmRows = jpmInput;
-//		JavaRDD<Row> msftRows = msftInput;
-//		JavaRDD<Row> nflxRows = nflxInput;
-//		JavaRDD<Row> nvdaRows = nvdaInput;
-//		JavaRDD<Row> psxRows = psxInput;
-//		JavaRDD<Row> pyplRows = pyplInput;
-//		JavaRDD<Row> qcomRows = qcomInput;
-//		JavaRDD<Row> rdfnRows = rdfnInput;
-//		JavaRDD<Row> rostRows = rostInput;
-//		JavaRDD<Row> sbuxRows = sbuxInput;
-//		JavaRDD<Row> sqRows = sqInput;
+		JavaRDD<Row> amznRows = readNasdaqData(sc.textFile(amznFile.getPath()), amznFile.getName().replace(".csv", ""));
+		JavaRDD<Row> atviRows = readNasdaqData(sc.textFile(atviFile.getPath()), atviFile.getName().replace(".csv", ""));
+		JavaRDD<Row> coinRows = readNasdaqData(sc.textFile(coinFile.getPath()), coinFile.getName().replace(".csv", ""));
+		JavaRDD<Row> dbxRows = readNasdaqData(sc.textFile(dbxFile.getPath()), dbxFile.getName().replace(".csv", ""));
+		JavaRDD<Row> docuRows = readNasdaqData(sc.textFile(docuFile.getPath()), docuFile.getName().replace(".csv", ""));
+		JavaRDD<Row> googRows = readNasdaqData(sc.textFile(googFile.getPath()), googFile.getName().replace(".csv", ""));
+		JavaRDD<Row> googlRows = readNasdaqData(sc.textFile(googlFile.getPath()), googlFile.getName().replace(".csv", ""));
+		JavaRDD<Row> jnjRows = readNasdaqData(sc.textFile(jnjFile.getPath()), jnjFile.getName().replace(".csv", ""));
+		JavaRDD<Row> jpmRows = readNasdaqData(sc.textFile(jpmFile.getPath()), jpmFile.getName().replace(".csv", ""));
+		JavaRDD<Row> msftRows = readNasdaqData(sc.textFile(msftFile.getPath()), msftFile.getName().replace(".csv", ""));
+		JavaRDD<Row> nflxRows = readNasdaqData(sc.textFile(nflxFile.getPath()), nflxFile.getName().replace(".csv", ""));
+		JavaRDD<Row> nvdaRows = readNasdaqData(sc.textFile(nvdaFile.getPath()), nvdaFile.getName().replace(".csv", ""));
+		JavaRDD<Row> psxRows = readNasdaqData(sc.textFile(psxFile.getPath()), psxFile.getName().replace(".csv", ""));
+		JavaRDD<Row> pyplRows = readNasdaqData(sc.textFile(pyplFile.getPath()), pyplFile.getName().replace(".csv", ""));
+		JavaRDD<Row> qcomRows = readNasdaqData(sc.textFile(qcomFile.getPath()), qcomFile.getName().replace(".csv", ""));
+		JavaRDD<Row> rdfnRows = readNasdaqData(sc.textFile(rdfnFile.getPath()), rdfnFile.getName().replace(".csv", ""));
+		JavaRDD<Row> rostRows = readNasdaqData(sc.textFile(rostFile.getPath()), rostFile.getName().replace(".csv", ""));
+		JavaRDD<Row> sbuxRows = readNasdaqData(sc.textFile(sbuxFile.getPath()), sbuxFile.getName().replace(".csv", ""));
+		JavaRDD<Row> sqRows = readNasdaqData(sc.textFile(sqFile.getPath()), sqFile.getName().replace(".csv", ""));
 		
 		// Create a dataframe for each stock dataset
 		Dataset<Row> alkDataFrame = createDataFrame(alkRows);
+		Dataset<Row> amznDataFrame = createDataFrame(amznRows);
+		Dataset<Row> atviDataFrame = createDataFrame(atviRows);
+		Dataset<Row> coinDataFrame = createDataFrame(coinRows);
+		Dataset<Row> dbxDataFrame = createDataFrame(dbxRows);
+		Dataset<Row> docuDataFrame = createDataFrame(docuRows);
+		Dataset<Row> googDataFrame = createDataFrame(googRows);
+		Dataset<Row> googlDataFrame = createDataFrame(googlRows);
+		Dataset<Row> jnjDataFrame = createDataFrame(jnjRows);
+		Dataset<Row> jpmDataFrame = createDataFrame(jpmRows);
+		Dataset<Row> msftDataFrame = createDataFrame(msftRows);
+		Dataset<Row> nflxDataFrame = createDataFrame(nflxRows);
+		Dataset<Row> nvdaDataFrame = createDataFrame(nvdaRows);
+		Dataset<Row> psxDataFrame = createDataFrame(psxRows);
+		Dataset<Row> pyplDataFrame = createDataFrame(pyplRows);
+		Dataset<Row> qcomDataFrame = createDataFrame(qcomRows);
+		Dataset<Row> rdfnDataFrame = createDataFrame(rdfnRows);
+		Dataset<Row> rostDataFrame = createDataFrame(rostRows);
+		Dataset<Row> sbuxDataFrame = createDataFrame(sbuxRows);
+		Dataset<Row> sqDataFrame = createDataFrame(sqRows);
 		
-		alkDataFrame.javaRDD().collect().forEach((Row row) -> {
-			System.out.println("Result:" + row.toString());
-		});
+
 	}
 	
 	// Read in data sourced from https://www.nasdaq.com/market-activity/stocks
