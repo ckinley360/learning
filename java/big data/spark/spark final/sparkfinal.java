@@ -82,9 +82,9 @@ public class sparkfinal {
 	public static JavaRDD<Row> readNasdaqData(JavaRDD<String> lines, String symbol) {
 		// Delete the header row
 		String headerRow = lines.first();
-		lines.filter((String line) -> !line.equals(headerRow));
+		JavaRDD<String> headerlessLines = lines.filter((String line) -> !line.equals(headerRow));
 		
-		JavaRDD<Row> rows = lines.map((String line) -> {
+		JavaRDD<Row> rows = headerlessLines.map((String line) -> {
 			String[] parts = line.split(",");
 			
 			String dateString = parts[0];
@@ -99,7 +99,7 @@ public class sparkfinal {
 			String reformattedDateString = yearString + "-" + monthString + "-" + dayString; 
 			Date date = Date.valueOf(reformattedDateString);
 			
-			return RowFactory.create(date, openPrice, closePrice);
+			return RowFactory.create(symbol, date, openPrice, closePrice);
 		});
 		
 		return rows;
@@ -112,12 +112,13 @@ public class sparkfinal {
 	
 	public static Dataset<Row> createDataFrame(JavaRDD<Row> rows) {
 		// Create the dataframe schema
+		StructField symbol = DataTypes.createStructField("symbol", DataTypes.StringType, false);
 		StructField date = DataTypes.createStructField("date", DataTypes.DateType, false);
 		StructField openPrice = DataTypes.createStructField("open_price", DataTypes.FloatType, false);
 		StructField closePrice = DataTypes.createStructField("close_price", DataTypes.FloatType, false);
 		
 		StructType schema = DataTypes.createStructType(
-				new StructField[] { date, openPrice, closePrice });
+				new StructField[] { symbol, date, openPrice, closePrice });
 		
 		return sparkSession.createDataFrame(rows, schema);
 	}
