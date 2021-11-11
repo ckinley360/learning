@@ -90,7 +90,78 @@ public class sparkfinal {
 		Dataset<Row> sbuxDataFrame = createDataFrame(sbuxRows);
 		Dataset<Row> sqDataFrame = createDataFrame(sqRows);
 		
-
+		// Create a temptable for each stock dataframe
+		alkDataFrame.registerTempTable("alk");
+		amznDataFrame.registerTempTable("amzn");
+		atviDataFrame.registerTempTable("atvi");
+		coinDataFrame.registerTempTable("coin");
+		dbxDataFrame.registerTempTable("dbx");
+		docuDataFrame.registerTempTable("docu");
+		googDataFrame.registerTempTable("goog");
+		googlDataFrame.registerTempTable("googl");
+		jnjDataFrame.registerTempTable("jnj");
+		jpmDataFrame.registerTempTable("jpm");
+		msftDataFrame.registerTempTable("msft");
+		nflxDataFrame.registerTempTable("nflx");
+		nvdaDataFrame.registerTempTable("nvda");
+		psxDataFrame.registerTempTable("psx");
+		pyplDataFrame.registerTempTable("pypl");
+		qcomDataFrame.registerTempTable("qcom");
+		rdfnDataFrame.registerTempTable("rdfn");
+		rostDataFrame.registerTempTable("rost");
+		sbuxDataFrame.registerTempTable("sbux");
+		sqDataFrame.registerTempTable("sq");
+		
+		// Union the datasets
+		Dataset<Row> combinedStockData = sparkSession.sql("WITH unionedData AS (\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM alk\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM amzn\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM atvi\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM coin\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM dbx\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM docu\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM goog\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM googl\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM jnj\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM jpm\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM msft\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM nflx\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM nvda\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM psx\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM pypl\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM qcom\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM rdfn\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM rost\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM sbux\n" + 
+				"    UNION\n" + 
+				"    SELECT symbol, date, open_price, close_price FROM sq\n" + 
+				")\n" + 
+				"SELECT symbol, date, open_price, close_price\n" + 
+				"FROM unionedData\n" + 
+				"ORDER BY symbol, date");
+		
+		// Output the combined data
+		combinedStockData.javaRDD().collect().forEach((Row row) -> {
+			System.out.println("Result:" + row.toString());
+		});
 	}
 	
 	// Read in data sourced from https://www.nasdaq.com/market-activity/stocks
