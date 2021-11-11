@@ -11,9 +11,18 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 public class sparkfinal {
 
+	// Create the configuration and context objects
+	public static SparkConf conf = new SparkConf();
+	public static JavaSparkContext sc = new JavaSparkContext("local", "Spark Final", conf);
+	//SQLContext sqlContext = new SQLContext(sc);
+	public static SparkSession sparkSession = SparkSession.builder().master("local").appName("Spark Final").config(conf).getOrCreate();
+	
 	public static void main(String[] args) {
 		// Receive the filepath arguments and create File objects with them 
 		File alkFile = new File(args[0]);
@@ -37,12 +46,6 @@ public class sparkfinal {
 //		File sbuxFile = new File(args[18]);
 //		File sqFile = new File(args[19]);
 		
-		// Create the configuration and context objects
-		SparkConf conf = new SparkConf();
-		JavaSparkContext sc = new JavaSparkContext("local", "Spark Final", conf);
-		//SQLContext sqlContext = new SQLContext(sc);
-		SparkSession sparkSession = SparkSession.builder().master("local").appName("Spark Final").config(conf).getOrCreate();
-		
 		// Read in the data
 		JavaRDD<Row> alkRows = readNasdaqData(sc.textFile(alkFile.getPath()), alkFile.getName().replace(".csv", ""));
 //		JavaRDD<Row> amznRows = amznInput;
@@ -64,6 +67,13 @@ public class sparkfinal {
 //		JavaRDD<Row> rostRows = rostInput;
 //		JavaRDD<Row> sbuxRows = sbuxInput;
 //		JavaRDD<Row> sqRows = sqInput;
+		
+		// Create a dataframe for each stock dataset
+		Dataset<Row> alkDataFrame = createDataFrame(alkRows);
+		
+		alkDataFrame.javaRDD().collect().forEach((Row row) -> {
+			System.out.println("Result:" + row.toString());
+		});
 	}
 	
 	// Read in data sourced from https://www.nasdaq.com/market-activity/stocks
@@ -71,7 +81,8 @@ public class sparkfinal {
 	// 11/08/2021,$150.44,55020870,$151.41,$151.57,$150.16
 	public static JavaRDD<Row> readNasdaqData(JavaRDD<String> lines, String symbol) {
 		// Delete the header row
-		
+		String headerRow = lines.first();
+		lines.filter((String line) -> !line.equals(headerRow));
 		
 		JavaRDD<Row> rows = lines.map((String line) -> {
 			String[] parts = line.split(",");
@@ -98,9 +109,16 @@ public class sparkfinal {
 //	public static JavaRDD<Row> readYahooFinanceData(JavaRDD<String> lines) {
 //		
 //	}
-	public static void deleteHeaderRow(JavaRDD<String> lines) {
-		lines.mapPartitionsWithIndex {
-			(idx, iter) -> if (idx == 0) {iter.drop(1)} else {iter}
-		};
+	
+	public static Dataset<Row> createDataFrame(JavaRDD<Row> rows) {
+		// Create the dataframe schema
+		StructField date = DataTypes.createStructField("date", DataTypes.DateType, false);
+		StructField openPrice = DataTypes.createStructField("open_price", DataTypes.FloatType, false);
+		StructField closePrice = DataTypes.createStructField("close_price", DataTypes.FloatType, false);
+		
+		StructType schema = DataTypes.createStructType(
+				new StructField[] { date, openPrice, closePrice });
+		
+		return sparkSession.createDataFrame(rows, schema);
 	}
 }
