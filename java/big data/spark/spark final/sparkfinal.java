@@ -50,22 +50,22 @@ public class sparkfinal {
 		JavaRDD<Row> alkRows = readNasdaqData(sc.textFile(alkFile.getPath()), alkFile.getName().replace(".csv", ""));
 		JavaRDD<Row> amznRows = readNasdaqData(sc.textFile(amznFile.getPath()), amznFile.getName().replace(".csv", ""));
 		JavaRDD<Row> atviRows = readNasdaqData(sc.textFile(atviFile.getPath()), atviFile.getName().replace(".csv", ""));
-		JavaRDD<Row> coinRows = readNasdaqData(sc.textFile(coinFile.getPath()), coinFile.getName().replace(".csv", ""));
+		JavaRDD<Row> coinRows = readYahooFinanceData(sc.textFile(coinFile.getPath()), coinFile.getName().replace(".csv", "").toLowerCase());
 		JavaRDD<Row> dbxRows = readNasdaqData(sc.textFile(dbxFile.getPath()), dbxFile.getName().replace(".csv", ""));
-		JavaRDD<Row> docuRows = readNasdaqData(sc.textFile(docuFile.getPath()), docuFile.getName().replace(".csv", ""));
+		JavaRDD<Row> docuRows = readYahooFinanceData(sc.textFile(docuFile.getPath()), docuFile.getName().replace(".csv", "").toLowerCase());
 		JavaRDD<Row> googRows = readNasdaqData(sc.textFile(googFile.getPath()), googFile.getName().replace(".csv", ""));
 		JavaRDD<Row> googlRows = readNasdaqData(sc.textFile(googlFile.getPath()), googlFile.getName().replace(".csv", ""));
 		JavaRDD<Row> jnjRows = readNasdaqData(sc.textFile(jnjFile.getPath()), jnjFile.getName().replace(".csv", ""));
 		JavaRDD<Row> jpmRows = readNasdaqData(sc.textFile(jpmFile.getPath()), jpmFile.getName().replace(".csv", ""));
-		JavaRDD<Row> msftRows = readNasdaqData(sc.textFile(msftFile.getPath()), msftFile.getName().replace(".csv", ""));
-		JavaRDD<Row> nflxRows = readNasdaqData(sc.textFile(nflxFile.getPath()), nflxFile.getName().replace(".csv", ""));
-		JavaRDD<Row> nvdaRows = readNasdaqData(sc.textFile(nvdaFile.getPath()), nvdaFile.getName().replace(".csv", ""));
+		JavaRDD<Row> msftRows = readYahooFinanceData(sc.textFile(msftFile.getPath()), msftFile.getName().replace(".csv", "").toLowerCase());
+		JavaRDD<Row> nflxRows = readYahooFinanceData(sc.textFile(nflxFile.getPath()), nflxFile.getName().replace(".csv", "").toLowerCase());
+		JavaRDD<Row> nvdaRows = readYahooFinanceData(sc.textFile(nvdaFile.getPath()), nvdaFile.getName().replace(".csv", "").toLowerCase());
 		JavaRDD<Row> psxRows = readNasdaqData(sc.textFile(psxFile.getPath()), psxFile.getName().replace(".csv", ""));
 		JavaRDD<Row> pyplRows = readNasdaqData(sc.textFile(pyplFile.getPath()), pyplFile.getName().replace(".csv", ""));
 		JavaRDD<Row> qcomRows = readNasdaqData(sc.textFile(qcomFile.getPath()), qcomFile.getName().replace(".csv", ""));
-		JavaRDD<Row> rdfnRows = readNasdaqData(sc.textFile(rdfnFile.getPath()), rdfnFile.getName().replace(".csv", ""));
-		JavaRDD<Row> rostRows = readNasdaqData(sc.textFile(rostFile.getPath()), rostFile.getName().replace(".csv", ""));
-		JavaRDD<Row> sbuxRows = readNasdaqData(sc.textFile(sbuxFile.getPath()), sbuxFile.getName().replace(".csv", ""));
+		JavaRDD<Row> rdfnRows = readYahooFinanceData(sc.textFile(rdfnFile.getPath()), rdfnFile.getName().replace(".csv", "").toLowerCase());
+		JavaRDD<Row> rostRows = readYahooFinanceData(sc.textFile(rostFile.getPath()), rostFile.getName().replace(".csv", "").toLowerCase());
+		JavaRDD<Row> sbuxRows = readYahooFinanceData(sc.textFile(sbuxFile.getPath()), sbuxFile.getName().replace(".csv", "").toLowerCase());
 		JavaRDD<Row> sqRows = readNasdaqData(sc.textFile(sqFile.getPath()), sqFile.getName().replace(".csv", ""));
 		
 		// Create a dataframe for each stock dataset
@@ -155,11 +155,13 @@ public class sparkfinal {
 				"    SELECT symbol, date, open_price, close_price FROM sq\n" + 
 				")\n" + 
 				"SELECT symbol, date, open_price, close_price\n" + 
-				"FROM unionedData\n" + 
-				"ORDER BY symbol, date");
+				"FROM unionedData");
+		
+		combinedStockData.registerTempTable("combined_stocks");
+		Dataset<Row> runningAverageStockData = sparkSession.sql("SELECT symbol, date, open_price, close_price, AVG(open_price) OVER (PARTITION BY symbol ORDER BY date) AS open_price_running_avg, AVG(close_price) OVER (PARTITION BY symbol ORDER BY date) AS close_price_running_avg FROM combined_stocks ORDER BY symbol, date");
 		
 		// Output the combined data
-		combinedStockData.javaRDD().collect().forEach((Row row) -> {
+		runningAverageStockData.javaRDD().collect().forEach((Row row) -> {
 			System.out.println("Result:" + row.toString());
 		});
 	}
@@ -176,10 +178,10 @@ public class sparkfinal {
 			String[] parts = line.split(",");
 			
 			String dateString = parts[0];
-			float closePrice = Float.parseFloat(parts[1].replace("$", "")); // Remove the $ from close price and convert to float
-			float openPrice = Float.parseFloat(parts[3].replace("$", "")); // Remove the $ from open price and convert to float
+			float closePrice = Float.parseFloat(parts[1].replace("$", "")); // Remove the $ from close price
+			float openPrice = Float.parseFloat(parts[3].replace("$", "")); // Remove the $ from open price
 			
-			// Convert the date string to yyyy-mm-dd so we can create a Date object
+			// Convert the date string to yyyy-mm-dd format so we can create a Date object
 			String[] dateParts = dateString.split("/");
 			String monthString = dateParts[0];
 			String dayString = dateParts[1];
@@ -193,10 +195,29 @@ public class sparkfinal {
 		return rows;
 	}
 	
-	// Read in data sourced from https://finance.yahoo.com/quote
-//	public static JavaRDD<Row> readYahooFinanceData(JavaRDD<String> lines) {
-//		
-//	}
+		// Read in data sourced from Read in data sourced from https://finance.yahoo.com/quote
+		// Date,Open,High,Low,Close,Adj Close,Volume
+		// 2021-04-14,381.000000,429.540009,310.000000,328.279999,328.279999,81065700
+		public static JavaRDD<Row> readYahooFinanceData(JavaRDD<String> lines, String symbol) {
+			// Delete the header row
+			String headerRow = lines.first();
+			JavaRDD<String> headerlessLines = lines.filter((String line) -> !line.equals(headerRow));
+			
+			JavaRDD<Row> rows = headerlessLines.map((String line) -> {
+				String[] parts = line.split(",");
+				
+				String dateString = parts[0];
+				float closePrice = Float.parseFloat(parts[4]);
+				float openPrice = Float.parseFloat(parts[1]);
+				
+				// Create a Date object from the dateString 
+				Date date = Date.valueOf(dateString);
+				
+				return RowFactory.create(symbol, date, openPrice, closePrice);
+			});
+			
+			return rows;
+		}
 	
 	public static Dataset<Row> createDataFrame(JavaRDD<Row> rows) {
 		// Create the dataframe schema
