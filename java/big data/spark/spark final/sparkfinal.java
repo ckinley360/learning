@@ -9,7 +9,6 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
-import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.StructField;
@@ -20,7 +19,6 @@ public class sparkfinal {
 	// Create the configuration and context objects
 	public static SparkConf conf = new SparkConf();
 	public static JavaSparkContext sc = new JavaSparkContext("local", "Spark Final", conf);
-	//SQLContext sqlContext = new SQLContext(sc);
 	public static SparkSession sparkSession = SparkSession.builder().master("local").appName("Spark Final").config(conf).getOrCreate();
 	
 	public static void main(String[] args) {
@@ -91,26 +89,26 @@ public class sparkfinal {
 		Dataset<Row> sqDataFrame = createDataFrame(sqRows);
 		
 		// Create a temptable for each stock dataframe
-		alkDataFrame.registerTempTable("alk");
-		amznDataFrame.registerTempTable("amzn");
-		atviDataFrame.registerTempTable("atvi");
-		coinDataFrame.registerTempTable("coin");
-		dbxDataFrame.registerTempTable("dbx");
-		docuDataFrame.registerTempTable("docu");
-		googDataFrame.registerTempTable("goog");
-		googlDataFrame.registerTempTable("googl");
-		jnjDataFrame.registerTempTable("jnj");
-		jpmDataFrame.registerTempTable("jpm");
-		msftDataFrame.registerTempTable("msft");
-		nflxDataFrame.registerTempTable("nflx");
-		nvdaDataFrame.registerTempTable("nvda");
-		psxDataFrame.registerTempTable("psx");
-		pyplDataFrame.registerTempTable("pypl");
-		qcomDataFrame.registerTempTable("qcom");
-		rdfnDataFrame.registerTempTable("rdfn");
-		rostDataFrame.registerTempTable("rost");
-		sbuxDataFrame.registerTempTable("sbux");
-		sqDataFrame.registerTempTable("sq");
+		alkDataFrame.createOrReplaceTempView("alk");
+		amznDataFrame.createOrReplaceTempView("amzn");
+		atviDataFrame.createOrReplaceTempView("atvi");
+		coinDataFrame.createOrReplaceTempView("coin");
+		dbxDataFrame.createOrReplaceTempView("dbx");
+		docuDataFrame.createOrReplaceTempView("docu");
+		googDataFrame.createOrReplaceTempView("goog");
+		googlDataFrame.createOrReplaceTempView("googl");
+		jnjDataFrame.createOrReplaceTempView("jnj");
+		jpmDataFrame.createOrReplaceTempView("jpm");
+		msftDataFrame.createOrReplaceTempView("msft");
+		nflxDataFrame.createOrReplaceTempView("nflx");
+		nvdaDataFrame.createOrReplaceTempView("nvda");
+		psxDataFrame.createOrReplaceTempView("psx");
+		pyplDataFrame.createOrReplaceTempView("pypl");
+		qcomDataFrame.createOrReplaceTempView("qcom");
+		rdfnDataFrame.createOrReplaceTempView("rdfn");
+		rostDataFrame.createOrReplaceTempView("rost");
+		sbuxDataFrame.createOrReplaceTempView("sbux");
+		sqDataFrame.createOrReplaceTempView("sq");
 		
 		// Union the datasets
 		Dataset<Row> combinedStockData = sparkSession.sql("WITH unionedData AS (\n" + 
@@ -157,7 +155,7 @@ public class sparkfinal {
 				"SELECT symbol, date, open_price, close_price\n" + 
 				"FROM unionedData");
 		
-		combinedStockData.registerTempTable("combined_stocks");
+		combinedStockData.createOrReplaceTempView("combined_stocks");
 		Dataset<Row> runningAverageStockData = sparkSession.sql("SELECT symbol, date, open_price, close_price, AVG(open_price) OVER (PARTITION BY symbol ORDER BY date) AS open_price_running_avg, AVG(close_price) OVER (PARTITION BY symbol ORDER BY date) AS close_price_running_avg FROM combined_stocks ORDER BY symbol, date");
 		
 		// Output the combined data
