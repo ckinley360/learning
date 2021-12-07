@@ -2,13 +2,14 @@ package stubs;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 public class MyKafkaProducer {
-
+	
 	public static void main(String[] args) {
 		String inputFile = args[0];
 		
@@ -20,8 +21,9 @@ public class MyKafkaProducer {
 		KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
 		
 		// Read in data from the text file to create a ProducerRecord, then send it.
+		BufferedReader br = null;
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(inputFile));
+			br = new BufferedReader(new FileReader(inputFile));
 			String line = br.readLine();
 			String[] parts = line.split("\t");
 			
@@ -33,6 +35,12 @@ public class MyKafkaProducer {
 			producer.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} 
 	}
 }
