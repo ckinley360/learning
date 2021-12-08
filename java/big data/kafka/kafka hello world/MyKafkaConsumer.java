@@ -1,5 +1,6 @@
 package stubs;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -9,7 +10,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 public class MyKafkaConsumer {
 
-	public static void createConsumer() {
+	private KafkaConsumer<String, String> consumer;
+	
+	public void createConsumer() {
 		String topic = "hello_topic";
 		
 		Properties props = new Properties();
@@ -19,16 +22,19 @@ public class MyKafkaConsumer {
 		props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 		
 		// Create the consumer and subscribe to the topic
-		KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+		consumer = new KafkaConsumer<String, String>(props);
 		consumer.subscribe(Arrays.asList(topic));
+		
+		// Create a duration object to set the poll timeout
+		Duration timeOut = Duration.ofMillis(100);
 		
 		while (true) {
 			// Poll for ConsumerRecords for a certain amount of time
-			ConsumerRecords<String, String> records = consumer.poll(100);
+			ConsumerRecords<String, String> records = consumer.poll(timeOut);
 			
 			// Process the ConsumerRecords, if any, that come back
 			for (ConsumerRecord<String, String> record : records) {
-				String key = record.key();
+				//String key = record.key();
 				String value = record.value();
 				
 				System.out.println(value);
@@ -37,10 +43,12 @@ public class MyKafkaConsumer {
 	}
 	
 	public void close() {
-		this.close();
+		this.consumer.close();
 	}
 	
 	public static void main(String[] args) {
-		
+		MyKafkaConsumer consumer = new MyKafkaConsumer();
+		consumer.createConsumer();
+		consumer.close();
 	}
 }
