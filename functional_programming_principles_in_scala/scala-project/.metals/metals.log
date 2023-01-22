@@ -1,0 +1,20 @@
+2022.12.27 17:02:24 INFO  tracing is disabled for protocol LSP, to enable tracing of incoming and outgoing JSON messages create an empty file at d:\GitHub Repos\scala-project\.metals\lsp.trace.json or C:\Users\ckinl\AppData\Local\scalameta\metals\cache\lsp.trace.json
+2022.12.27 17:02:25 INFO  logging to file D:\GitHub Repos\scala-project\.metals\metals.log
+2022.12.27 17:02:25 INFO  Started: Metals version 0.11.9 in workspace 'D:\GitHub Repos\scala-project' for client Visual Studio Code 1.74.2.
+2022.12.27 17:02:27 INFO  time: initialize in 2.78s
+2022.12.27 17:02:30 WARN  Build server is not auto-connectable.
+2022.12.27 17:02:30 WARN  no build tool detected in workspace 'D:\GitHub Repos\scala-project'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2022.12.27 17:03:01 WARN  no build tool detected in workspace 'D:\GitHub Repos\scala-project'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. 
+2022.12.27 17:03:40 INFO  no build target found for D:\GitHub Repos\scala-project\scala-project\src\main\scala\example\example.worksheet.sc. Using presentation compiler with project's scala-library version: 3.2.0
+2022.12.27 17:03:43 INFO  time: code lens generation in 10s
+2022.12.27 17:03:48 INFO  no build target found for D:\GitHub Repos\scala-project\scala-project\src\main\scala\example\example.worksheet.sc. Using presentation compiler with project's scala-library version: 3.2.0
+2022.12.27 17:03:48 INFO  time: evaluated worksheet 'example.worksheet.sc' in 17s
+[31merror[39m: scala-project\src\main\scala\example\example.worksheet.sc:7:3: 
+expression expected but unindent found
+x / 
+  ^
+2022.12.27 17:04:20 INFO  time: evaluated worksheet 'example.worksheet.sc' in 0.34s
+2022.12.27 17:04:25 INFO  time: evaluated worksheet 'example.worksheet.sc' in 0.8s
+2022.12.27 17:04:52 INFO  time: evaluated worksheet 'example.worksheet.sc' in 0.68s
+2022.12.27 17:04:53 INFO  time: evaluated worksheet 'example.worksheet.sc' in 0.63s
+2022.12.27 17:06:36 INFO  shutting down Metals
