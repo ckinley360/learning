@@ -9,10 +9,16 @@ object RecFun extends RecFunInterface:
         print(s"${pascal(col, row)} ")
       println()
     */
+
+    /*
     val testString: String = "()()jus(t an exampl)e"
     println("***Start***")
     println(balance(testString.toList))
     println("***End***")
+    */
+
+    val coins = List(1, 2, 3)
+    println(countChange(4, coins))
 
   /**
    * Exercise 1
@@ -49,4 +55,18 @@ object RecFun extends RecFunInterface:
   /**
    * Exercise 3
    */
-  def countChange(money: Int, coins: List[Int]): Int = ???
+  def countChange(money: Int, coins: List[Int]): Int = {
+    def count(sum: Int, coins: List[Int], n: Int): Int = {
+      if (sum == 0) {
+        1
+      } else if (sum < 0) {
+        0
+      } else if (n <= 0) {
+        0
+      } else {
+        count(sum, coins, n-1) + count(sum-coins(n-1), coins, n)
+      }
+    }
+
+    count(money, coins, coins.length)
+  }
